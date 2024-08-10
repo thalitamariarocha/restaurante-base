@@ -8,6 +8,7 @@ import ifmt.cba.negocio.TipoPreparoNegocio;
 import ifmt.cba.persistencia.FabricaEntityManager;
 import ifmt.cba.persistencia.PersistenciaException;
 import ifmt.cba.persistencia.TipoPreparoDAO;
+import ifmt.cba.servico.util.MensagemErro;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.DELETE;
 import jakarta.ws.rs.GET;
@@ -42,11 +43,13 @@ public class TipoPreparoServico {
         ResponseBuilder resposta;
         try {
             tipoPreparoNegocio.inserir(tipoPreparoDTO);
+            TipoPreparoDTO tipoPreparoDTOTemp = tipoPreparoNegocio.pesquisaParteDescricao(tipoPreparoDTO.getDescricao()).get(0);
+            tipoPreparoDTOTemp.setLink("/tipopreparo/codigo/"+tipoPreparoDTOTemp.getCodigo());
             resposta = Response.ok();
-            resposta.entity(tipoPreparoNegocio.pesquisaParteDescricao(tipoPreparoDTO.getDescricao()).get(0));
+            resposta.entity(tipoPreparoDTOTemp);
         } catch (Exception ex) {
             resposta = Response.status(400);
-            resposta.entity("{\"erro\": \""+ex.getMessage()+"\"}");
+            resposta.entity(new MensagemErro(ex.getMessage()));
         }
         return resposta.build();
     }
@@ -58,11 +61,14 @@ public class TipoPreparoServico {
         ResponseBuilder resposta;
         try {
             tipoPreparoNegocio.alterar(tipoPreparoDTO);
+            TipoPreparoDTO tipoPreparoDTOTemp = tipoPreparoNegocio.pesquisaCodigo(tipoPreparoDTO.getCodigo());
+            tipoPreparoDTOTemp.setLink("/tipopreparo/codigo/"+tipoPreparoDTOTemp.getCodigo());
             resposta = Response.ok();
-            resposta.entity(tipoPreparoNegocio.pesquisaCodigo(tipoPreparoDTO.getCodigo()));
+            resposta.entity(tipoPreparoDTOTemp);
         } catch (Exception ex) {
             resposta = Response.status(400);
-            resposta.entity("{\"erro\": \""+ex.getMessage()+"\"}");
+            resposta.entity(new MensagemErro(ex.getMessage()));
+
         }
         return resposta.build();
     }
@@ -78,7 +84,7 @@ public class TipoPreparoServico {
             resposta.entity(tipoPreparoNegocio.pesquisaCodigo(codigo));
         } catch (Exception ex) {
             resposta = Response.status(400);
-            resposta.entity("{\"erro\": \""+ex.getMessage()+"\"}");
+            resposta.entity(new MensagemErro(ex.getMessage()));
         }
         return resposta.build();
     }
@@ -89,12 +95,14 @@ public class TipoPreparoServico {
     public Response buscarTipoPreparoPorCodigo(@PathParam("codigo") int codigo) {
         ResponseBuilder resposta;
         try {
-            TipoPreparoDTO tipoPreparoDTO = tipoPreparoNegocio.pesquisaCodigo(codigo);
+            tipoPreparoNegocio.pesquisaCodigo(codigo);
+            TipoPreparoDTO tipoPreparoDTOTemp = tipoPreparoNegocio.pesquisaCodigo(codigo);
+            tipoPreparoDTOTemp.setLink("/tipopreparo/codigo/"+tipoPreparoDTOTemp.getCodigo());
             resposta = Response.ok();
-            resposta.entity(tipoPreparoDTO);
+            resposta.entity(tipoPreparoDTOTemp);
         } catch (Exception ex) {
             resposta = Response.status(400);
-            resposta.entity("{\"erro\": \""+ex.getMessage()+"\"}");
+            resposta.entity(new MensagemErro(ex.getMessage()));
         }
         return resposta.build();
     }
@@ -106,11 +114,14 @@ public class TipoPreparoServico {
         ResponseBuilder resposta;
         try {
             List<TipoPreparoDTO> listaTipoPreparoDTO = tipoPreparoNegocio.pesquisaParteDescricao(descricao);
+            for (TipoPreparoDTO tipoPreparoDTO : listaTipoPreparoDTO) {
+                tipoPreparoDTO.setLink("/tipopreparo/codigo/"+tipoPreparoDTO.getCodigo());
+            }
             resposta = Response.ok();
             resposta.entity(listaTipoPreparoDTO);
         } catch (Exception ex) {
             resposta = Response.status(400);
-            resposta.entity("{\"erro\": \""+ex.getMessage()+"\"}");
+            resposta.entity(new MensagemErro(ex.getMessage()));
         }
         return resposta.build();
     }
