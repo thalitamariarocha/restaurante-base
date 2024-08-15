@@ -1,5 +1,6 @@
 package ifmt.cba.servico;
 
+import java.time.Duration;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
@@ -8,6 +9,7 @@ import java.util.List;
 import ifmt.cba.dto.ClienteDTO;
 import ifmt.cba.dto.EstadoPedidoDTO;
 import ifmt.cba.dto.PedidoDTO;
+import ifmt.cba.negocio.ClienteNegocio;
 import ifmt.cba.negocio.NegocioException;
 import ifmt.cba.negocio.PedidoNegocio;
 import ifmt.cba.persistencia.ClienteDAO;
@@ -33,6 +35,7 @@ import jakarta.ws.rs.core.Response.ResponseBuilder;
 public class PedidoServico {
 
     private static PedidoNegocio pedidoNegocio;
+    private static ClienteNegocio clienteNegocio;
     private static PedidoDAO pedidoDAO;
     private static ClienteDAO clienteDAO;
 
@@ -42,6 +45,7 @@ public class PedidoServico {
             ItemPedidoDAO itemPedidoDAO = new ItemPedidoDAO(FabricaEntityManager.getEntityManagerProducao());
             clienteDAO = new ClienteDAO(FabricaEntityManager.getEntityManagerProducao());
             pedidoNegocio = new PedidoNegocio(pedidoDAO, itemPedidoDAO, clienteDAO);
+            clienteNegocio = new ClienteNegocio(clienteDAO, pedidoDAO);
         } catch (PersistenciaException e) {
             e.printStackTrace();
         }
@@ -257,11 +261,12 @@ public class PedidoServico {
     }
 
     @GET
-    @Path("/cliente")
+    @Path("/cliente/{codigo}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response buscarPorCliente(ClienteDTO clienteDTO) {
+    public Response buscarPorCliente(@PathParam("codigo") int codigo) {
         ResponseBuilder resposta;
         try {
+            ClienteDTO clienteDTO = clienteNegocio.pesquisaCodigo(codigo);
             List<PedidoDTO> listaPedidoDTO = pedidoNegocio.pesquisaPorCliente(clienteDTO);
             for (PedidoDTO pedidoDTO : listaPedidoDTO) {
                 pedidoDTO.setLink("/pedido/codigo/" + pedidoDTO.getCodigo());
@@ -307,15 +312,64 @@ public class PedidoServico {
         return resposta.build();
     }
 
+    @GET
+    @Path("/media-tempo-pronto-concluido")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response calcularMediaTempoEntreProntoECOncluido() {
+        ResponseBuilder resposta;
+        try {
+            List<PedidoDTO> listaPedidoDTO = pedidoNegocio.pesquisaPorEstado(EstadoPedidoDTO.CONCLUIDO);
 
+            double mediaTempo = listaPedidoDTO.stream()
+                    .filter(pedido -> pedido.getHoraPronto() != null && pedido.getHoraFinalizado() != null)
+                    .mapToLong(pedido -> Duration.between(pedido.getHoraPronto(), pedido.getHoraFinalizado()).toMinutes())
+                    .average()
+                    .orElse(0);
 
+            resposta = Response.ok();
+            resposta.entity(mediaTempo);
+        } catch (NegocioException ex) {
 
+            resposta = Response.status(400);
+            resposta.entity(new MensagemErro(ex.getMessage()));
+        } catch (Exception ex) {
 
+            resposta = Response.status(500);
+            resposta.entity(new MensagemErro("Erro inesperado: " + ex.getMessage()));
+        }
+        return resposta.build();
+    }
 
+    
+    @GET
+    @Path("/media-tempo-registrado-pronto")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response calcularMediaTempoRegistradoEPronto() {
+        ResponseBuilder resposta;
+        try {
+            List<PedidoDTO> listaPedidoDTO = pedidoNegocio.pesquisaPorEstado(EstadoPedidoDTO.PRONTO);
+            listaPedidoDTO.addAll(pedidoNegocio.pesquisaPorEstado(EstadoPedidoDTO.ENTREGA));
+            listaPedidoDTO.addAll(pedidoNegocio.pesquisaPorEstado(EstadoPedidoDTO.CONCLUIDO));
 
+            double mediaTempo = listaPedidoDTO.stream()
+                    .filter(pedido -> pedido.getHoraPedido() != null && pedido.getHoraPronto() != null)
+                    .mapToLong(pedido -> Duration.between(pedido.getHoraPedido(), pedido.getHoraPronto()).toMinutes())
+                    .average()
+                    .orElse(0);
 
+            resposta = Response.ok();
+            resposta.entity(mediaTempo);
+        } catch (NegocioException ex) {
 
+            resposta = Response.status(400);
+            resposta.entity(new MensagemErro(ex.getMessage()));
+        } catch (Exception ex) {
 
+            resposta = Response.status(500);
+            resposta.entity(new MensagemErro("Erro inesperado: " + ex.getMessage()));
+        }
+        return resposta.build();
+    }
 
     // tempo médio entre o término da produção de uma refeição e a finalização da entrega ao cliente
 //    @GET

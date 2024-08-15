@@ -16,6 +16,7 @@ import jakarta.ws.rs.PUT;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.QueryParam;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.Response.ResponseBuilder;
@@ -104,15 +105,13 @@ public class ProdutoServico {
     }
 
     @GET
-    @Path("/nome/{nome}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response buscarProdutoPorNome(@PathParam("nome") String nome) {
+    public Response buscarProdutoPorNome(@QueryParam("nome") String nome) {
         ResponseBuilder resposta;
         try {
             List<ProdutoDTO> listaProdutoDTO = produtoNegocio.pesquisaParteNome(nome);
             for (ProdutoDTO produtoDTO : listaProdutoDTO) {
                 produtoDTO.setLink("/produto/codigo/" + produtoDTO.getCodigo());
-
             }
             resposta = Response.ok();
             resposta.entity(listaProdutoDTO);
@@ -132,8 +131,6 @@ public class ProdutoServico {
             List<ProdutoDTO> listaProdutoDTO = produtoNegocio.pesquisaProdutoAbaixoEstoqueMinimo();
             for (ProdutoDTO produtoDTO : listaProdutoDTO) {
                 produtoDTO.setLink("/produto/estoquebaixo");
-                //produtoDTO.setLink("/produto/estoquebaixo" + produtoDTO.getCodigo());
-
             }
             resposta = Response.ok();
             resposta.entity(listaProdutoDTO);
