@@ -9,7 +9,7 @@ import ifmt.cba.persistencia.FabricaEntityManager;
 import ifmt.cba.persistencia.PersistenciaException;
 import ifmt.cba.persistencia.ProdutoDAO;
 import ifmt.cba.persistencia.RegistroEstoqueDAO;
-import ifmt.cba.servico.util.MensagemErro;
+import ifmt.cba.servico.util.Mensagem;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.*;
 
@@ -46,7 +46,7 @@ public class RegistroEstoqueServico {
             resposta.entity(registroEstoqueDTOTemp);
         } catch (Exception ex) {
             resposta = Response.status(400);
-            resposta.entity(new MensagemErro(ex.getMessage()));
+            resposta.entity(new Mensagem(ex.getMessage()));
         }
         return resposta.build();
     }
@@ -63,7 +63,7 @@ public class RegistroEstoqueServico {
             resposta.entity(registroEstoqueDTO);
         } catch (Exception ex) {
             resposta = Response.status(400);
-            resposta.entity(new MensagemErro(ex.getMessage()));
+            resposta.entity(new Mensagem(ex.getMessage()));
         }
         return resposta.build();
     }
@@ -79,7 +79,7 @@ public class RegistroEstoqueServico {
             resposta.entity(registroEstoqueDTO);
         } catch (Exception ex) {
             resposta = Response.status(400);
-            resposta.entity(new MensagemErro(ex.getMessage()));
+            resposta.entity(new Mensagem(ex.getMessage()));
         }
         return resposta.build();
     }
@@ -99,7 +99,7 @@ public class RegistroEstoqueServico {
             resposta.entity(listaEstoqueDTO);
         } catch (Exception ex) {
             resposta = Response.status(400);
-            resposta.entity(new MensagemErro(ex.getMessage()));
+            resposta.entity(new Mensagem(ex.getMessage()));
         }
         return resposta.build();
     }
@@ -120,7 +120,7 @@ public class RegistroEstoqueServico {
             resposta.entity(listaEstoqueDTO);
         } catch (Exception ex) {
             resposta = Response.status(400);
-            resposta.entity(new MensagemErro(ex.getMessage()));
+            resposta.entity(new Mensagem(ex.getMessage()));
         }
         return resposta.build();
     }

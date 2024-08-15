@@ -5,7 +5,7 @@ import ifmt.cba.negocio.ColaboradorNegocio;
 import ifmt.cba.persistencia.ColaboradorDAO;
 import ifmt.cba.persistencia.FabricaEntityManager;
 import ifmt.cba.persistencia.PersistenciaException;
-import ifmt.cba.servico.util.MensagemErro;
+import ifmt.cba.servico.util.Mensagem;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.*;
 
@@ -39,7 +39,7 @@ public class ColaboradorServico {
                 resposta.entity(colaboradorDTOTemp);
             } catch (Exception ex) {
                 resposta = Response.status(400);
-                resposta.entity(new MensagemErro(ex.getMessage()));
+                resposta.entity(new Mensagem(ex.getMessage()));
             }
             return resposta.build();
         }
@@ -57,7 +57,7 @@ public class ColaboradorServico {
                 resposta.entity(colaboradorDTOTemp);
             } catch (Exception ex) {
                 resposta = Response.status(400);
-                resposta.entity(new MensagemErro(ex.getMessage()));
+                resposta.entity(new Mensagem(ex.getMessage()));
             }
             return resposta.build();
         }
@@ -74,7 +74,7 @@ public class ColaboradorServico {
                 resposta.entity(colaboradorDTO);
             } catch (Exception ex) {
                 resposta = Response.status(400);
-                resposta.entity(new MensagemErro(ex.getMessage()));
+                resposta.entity(new Mensagem(ex.getMessage()));
             }
             return resposta.build();
         }
@@ -91,7 +91,7 @@ public class ColaboradorServico {
                 resposta.entity(colaboradorDTO);
             } catch (Exception ex) {
                 resposta = Response.status(400);
-                resposta.entity(new MensagemErro(ex.getMessage()));
+                resposta.entity(new Mensagem(ex.getMessage()));
             }
             return resposta.build();
         }
@@ -106,7 +106,7 @@ public class ColaboradorServico {
                 resposta = Response.ok();
             } catch (Exception ex) {
                 resposta = Response.status(400);
-                resposta.entity(new MensagemErro(ex.getMessage()));
+                resposta.entity(new Mensagem(ex.getMessage()));
             }
             return resposta.build();
         }

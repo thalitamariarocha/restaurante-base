@@ -7,7 +7,7 @@ import ifmt.cba.persistencia.ItemOrdemProducaoDAO;
 import ifmt.cba.persistencia.OrdemProducaoDAO;
 import ifmt.cba.persistencia.PersistenciaException;
 import ifmt.cba.persistencia.FabricaEntityManager;
-import ifmt.cba.servico.util.MensagemErro;
+import ifmt.cba.servico.util.Mensagem;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.*;
 
@@ -41,7 +41,7 @@ public class OrdemProducaoServico {
             resposta = Response.ok();
         } catch (Exception ex) {
             resposta = Response.status(400);
-            resposta.entity(new MensagemErro(ex.getMessage()));
+            resposta.entity(new Mensagem(ex.getMessage()));
         }
         return resposta.build();
     }

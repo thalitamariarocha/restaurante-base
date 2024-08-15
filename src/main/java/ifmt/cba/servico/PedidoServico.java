@@ -17,7 +17,7 @@ import ifmt.cba.persistencia.FabricaEntityManager;
 import ifmt.cba.persistencia.ItemPedidoDAO;
 import ifmt.cba.persistencia.PedidoDAO;
 import ifmt.cba.persistencia.PersistenciaException;
-import ifmt.cba.servico.util.MensagemErro;
+import ifmt.cba.servico.util.Mensagem;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.DELETE;
 import jakarta.ws.rs.GET;
@@ -64,7 +64,7 @@ public class PedidoServico {
             resposta.entity(pedidoDTOTemp);
         } catch (Exception ex) {
             resposta = Response.status(400);
-            resposta.entity(new MensagemErro(ex.getMessage()));
+            resposta.entity(new Mensagem(ex.getMessage()));
         }
         return resposta.build();
     }
@@ -82,7 +82,7 @@ public class PedidoServico {
             resposta.entity(pedidoDTOTemp);
         } catch (Exception ex) {
             resposta = Response.status(400);
-            resposta.entity(new MensagemErro(ex.getMessage()));
+            resposta.entity(new Mensagem(ex.getMessage()));
         }
         return resposta.build();
     }
@@ -97,7 +97,7 @@ public class PedidoServico {
             resposta = Response.ok();
         } catch (Exception ex) {
             resposta = Response.status(400);
-            resposta.entity(new MensagemErro(ex.getMessage()));
+            resposta.entity(new Mensagem(ex.getMessage()));
         }
         return resposta.build();
     }
@@ -118,7 +118,7 @@ public class PedidoServico {
             resposta.entity(pedidoDTOTemp);
         } catch (Exception ex) {
             resposta = Response.status(400);
-            resposta.entity(new MensagemErro(ex.getMessage()));
+            resposta.entity(new Mensagem(ex.getMessage()));
         }
         return resposta.build();
     }
@@ -139,7 +139,7 @@ public class PedidoServico {
             resposta.entity(pedidoNegocio.pesquisaCodigo(pedidoDTO.getCodigo()));
         } catch (Exception ex) {
             resposta = Response.status(400);
-            resposta.entity(new MensagemErro(ex.getMessage()));
+            resposta.entity(new Mensagem(ex.getMessage()));
         }
         return resposta.build();
     }
@@ -159,7 +159,7 @@ public class PedidoServico {
             resposta.entity(pedidoDTOTemp);
         } catch (Exception ex) {
             resposta = Response.status(400);
-            resposta.entity(new MensagemErro(ex.getMessage()));
+            resposta.entity(new Mensagem(ex.getMessage()));
         }
         return resposta.build();
     }
@@ -178,7 +178,7 @@ public class PedidoServico {
             resposta.entity(pedidoDTOTemp);
         } catch (Exception ex) {
             resposta = Response.status(400);
-            resposta.entity(new MensagemErro(ex.getMessage()));
+            resposta.entity(new Mensagem(ex.getMessage()));
         }
         return resposta.build();
     }
@@ -196,7 +196,7 @@ public class PedidoServico {
             resposta.entity(pedidoDTOTemp);
         } catch (Exception ex) {
             resposta = Response.status(400);
-            resposta.entity(new MensagemErro(ex.getMessage()));
+            resposta.entity(new Mensagem(ex.getMessage()));
         }
         return resposta.build();
     }
@@ -216,7 +216,7 @@ public class PedidoServico {
             resposta.entity(listaPedidoDTO);
         } catch (Exception ex) {
             resposta = Response.status(400);
-            resposta.entity(new MensagemErro(ex.getMessage()));
+            resposta.entity(new Mensagem(ex.getMessage()));
         }
         return resposta.build();
     }
@@ -235,7 +235,7 @@ public class PedidoServico {
             resposta.entity(listaPedidoDTO);
         } catch (Exception ex) {
             resposta = Response.status(400);
-            resposta.entity(new MensagemErro(ex.getMessage()));
+            resposta.entity(new Mensagem(ex.getMessage()));
         }
         return resposta.build();
     }
@@ -255,7 +255,7 @@ public class PedidoServico {
             resposta.entity(listaPedidoDTO);
         } catch (Exception ex) {
             resposta = Response.status(400);
-            resposta.entity(new MensagemErro(ex.getMessage()));
+            resposta.entity(new Mensagem(ex.getMessage()));
         }
         return resposta.build();
     }
@@ -275,7 +275,7 @@ public class PedidoServico {
             resposta.entity(listaPedidoDTO);
         } catch (Exception ex) {
             resposta = Response.status(400);
-            resposta.entity(new MensagemErro(ex.getMessage()));
+            resposta.entity(new Mensagem(ex.getMessage()));
         }
         return resposta.build();
     }
@@ -299,15 +299,15 @@ public class PedidoServico {
         } catch (NegocioException ex) {
             // Tratar exceção de negócio
             resposta = Response.status(400);
-            resposta.entity(new MensagemErro(ex.getMessage()));
+            resposta.entity(new Mensagem(ex.getMessage()));
         } catch (DateTimeParseException ex) {
             // Tratar exceção de parsing de data
             resposta = Response.status(400);
-            resposta.entity(new MensagemErro("Formato de data inválido: " + ex.getParsedString()));
+            resposta.entity(new Mensagem("Formato de data inválido: " + ex.getParsedString()));
         } catch (Exception ex) {
             // Tratar outras exceções
             resposta = Response.status(500);
-            resposta.entity(new MensagemErro("Erro inesperado: " + ex.getMessage()));
+            resposta.entity(new Mensagem("Erro inesperado: " + ex.getMessage()));
         }
         return resposta.build();
     }
@@ -331,11 +331,11 @@ public class PedidoServico {
         } catch (NegocioException ex) {
 
             resposta = Response.status(400);
-            resposta.entity(new MensagemErro(ex.getMessage()));
+            resposta.entity(new Mensagem(ex.getMessage()));
         } catch (Exception ex) {
 
             resposta = Response.status(500);
-            resposta.entity(new MensagemErro("Erro inesperado: " + ex.getMessage()));
+            resposta.entity(new Mensagem("Erro inesperado: " + ex.getMessage()));
         }
         return resposta.build();
     }
@@ -362,11 +362,11 @@ public class PedidoServico {
         } catch (NegocioException ex) {
 
             resposta = Response.status(400);
-            resposta.entity(new MensagemErro(ex.getMessage()));
+            resposta.entity(new Mensagem(ex.getMessage()));
         } catch (Exception ex) {
 
             resposta = Response.status(500);
-            resposta.entity(new MensagemErro("Erro inesperado: " + ex.getMessage()));
+            resposta.entity(new Mensagem("Erro inesperado: " + ex.getMessage()));
         }
         return resposta.build();
     }
