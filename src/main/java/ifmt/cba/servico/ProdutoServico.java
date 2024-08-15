@@ -87,7 +87,7 @@ public class ProdutoServico {
     }
 
     @GET
-    @Path("/codigo/{codigo}")
+    @Path("/{codigo}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response buscarProdutoPorCodigo(@PathParam("codigo") int codigo) {
         ResponseBuilder resposta;

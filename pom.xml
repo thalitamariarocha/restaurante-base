@@ -13,11 +13,11 @@
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <java.version>18</java.version>
+    <java.version>17</java.version>
     <junit-jupiter.version>5.10.0</junit-jupiter.version>
     
-    <maven-compiler-source.version>18</maven-compiler-source.version>
-    <maven-compiler-target.version>18</maven-compiler-target.version>
+    <maven-compiler-source.version>17</maven-compiler-source.version>
+    <maven-compiler-target.version>17</maven-compiler-target.version>
     
     <maven-clean-plugin.version>3.4.0</maven-clean-plugin.version>
     <maven-compiler-pluin.version>3.13.0</maven-compiler-pluin.version>
