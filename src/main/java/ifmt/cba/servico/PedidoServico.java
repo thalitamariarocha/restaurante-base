@@ -2,11 +2,13 @@ package ifmt.cba.servico;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.List;
 
 import ifmt.cba.dto.ClienteDTO;
 import ifmt.cba.dto.EstadoPedidoDTO;
 import ifmt.cba.dto.PedidoDTO;
+import ifmt.cba.negocio.NegocioException;
 import ifmt.cba.negocio.PedidoNegocio;
 import ifmt.cba.persistencia.ClienteDAO;
 import ifmt.cba.persistencia.FabricaEntityManager;
@@ -272,4 +274,59 @@ public class PedidoServico {
         }
         return resposta.build();
     }
+
+    //consultar a produção de refeições por dia com totalização mensal
+    @GET
+    @Path("/relatorioPedidoPeriodo")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response relatorioPedidoPeriodo(@QueryParam("dataInicial") String dataInicialStr, @QueryParam("dataFinal") String dataFinalStr) {
+        ResponseBuilder resposta;
+        try {
+
+            LocalDate dataInicial = LocalDate.parse(dataInicialStr);
+            LocalDate dataFinal = LocalDate.parse(dataFinalStr);
+
+            List<PedidoDTO> listaPedidoDTO = pedidoNegocio.pesquisaPorDataProducao(dataInicial, dataFinal);
+            double totalizacao = listaPedidoDTO.size();
+
+            resposta = Response.ok();
+            resposta.entity(totalizacao);
+        } catch (NegocioException ex) {
+            // Tratar exceção de negócio
+            resposta = Response.status(400);
+            resposta.entity(new MensagemErro(ex.getMessage()));
+        } catch (DateTimeParseException ex) {
+            // Tratar exceção de parsing de data
+            resposta = Response.status(400);
+            resposta.entity(new MensagemErro("Formato de data inválido: " + ex.getParsedString()));
+        } catch (Exception ex) {
+            // Tratar outras exceções
+            resposta = Response.status(500);
+            resposta.entity(new MensagemErro("Erro inesperado: " + ex.getMessage()));
+        }
+        return resposta.build();
+    }
+
+
+
+
+
+
+
+
+
+
+
+    // tempo médio entre o término da produção de uma refeição e a finalização da entrega ao cliente
+//    @GET
+//    @Path("/tempo")
+//    @Produces(MediaType.APPLICATION_JSON)
+//    public Response tempoMedioEntrega() {
+//        ResponseBuilder resposta;
+//        try {
+//            List<PedidoDTO> listaPedidoDTO = pedidoNegocio.toDTOAll();
+//
+//
+//    }
+
 }

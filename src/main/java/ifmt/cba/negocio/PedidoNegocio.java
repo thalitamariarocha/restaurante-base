@@ -175,7 +175,7 @@ public class PedidoNegocio {
 		}
 	}
 
-	//buscar estado do pedido - THALITA CRIOU ESSE
+
 //	public EstadoPedidoDTO buscarEstadoPedido(PedidoDTO pedidoDTO) throws NegocioException {
 //		try {
 //			Pedido pedido = pedidoDAO.buscarPorCodigo(pedidoDTO.getCodigo());

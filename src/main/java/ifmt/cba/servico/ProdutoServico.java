@@ -131,14 +131,15 @@ public class ProdutoServico {
         try {
             List<ProdutoDTO> listaProdutoDTO = produtoNegocio.pesquisaProdutoAbaixoEstoqueMinimo();
             for (ProdutoDTO produtoDTO : listaProdutoDTO) {
-                produtoDTO.setLink("/produto/codigo/" + produtoDTO.getCodigo());
+                produtoDTO.setLink("/produto/estoquebaixo");
+                //produtoDTO.setLink("/produto/estoquebaixo" + produtoDTO.getCodigo());
 
             }
             resposta = Response.ok();
             resposta.entity(listaProdutoDTO);
         } catch (Exception ex) {
             resposta = Response.status(400);
-            resposta.entity("{\"erro\": \"" + ex.getMessage() + "\"}");
+            resposta.entity(new MensagemErro(ex.getMessage()));
         }
         return resposta.build();
     }
