@@ -44,7 +44,7 @@ public class ProdutoServico {
         try {
             produtoNegocio.inserir(produtoDTO);
             ProdutoDTO produtoDTOTemp = produtoNegocio.pesquisaParteNome(produtoDTO.getNome()).get(0);
-            produtoDTOTemp.setLink("/produto/codigo/" + produtoDTOTemp.getCodigo());
+            produtoDTOTemp.setLink("/produto/" + produtoDTOTemp.getCodigo());
             resposta = Response.ok();
             resposta.entity(produtoDTOTemp);
         } catch (Exception ex) {
@@ -62,7 +62,7 @@ public class ProdutoServico {
         try {
             produtoNegocio.alterar(produtoDTO);
             ProdutoDTO produtoDTOTemp = produtoNegocio.pesquisaCodigo(produtoDTO.getCodigo());
-            produtoDTOTemp.setLink("/produto/codigo/" + produtoDTOTemp.getCodigo());
+            produtoDTOTemp.setLink("/produto/" + produtoDTOTemp.getCodigo());
             resposta = Response.ok();
             resposta.entity(produtoDTOTemp);
         } catch (Exception ex) {
@@ -94,7 +94,7 @@ public class ProdutoServico {
         ResponseBuilder resposta;
         try {
             ProdutoDTO produtoDTO = produtoNegocio.pesquisaCodigo(codigo);
-            produtoDTO.setLink("/produto/codigo/" + produtoDTO.getCodigo());
+            produtoDTO.setLink("/produto/" + produtoDTO.getCodigo());
             resposta = Response.ok();
             resposta.entity(produtoDTO);
         } catch (Exception ex) {

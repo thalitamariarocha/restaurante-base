@@ -20,5 +20,4 @@ public class Mensagem {
         this.erro = texto;
     }
 
-    
 }
