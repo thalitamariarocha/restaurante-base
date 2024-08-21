@@ -30,7 +30,7 @@ public class ColaboradorServico {
         Response.ResponseBuilder resposta;
         try {
             colaboradorNegocio.inserir(colaboradorDTO);
-            ColaboradorDTO colaboradorDTOTemp = colaboradorNegocio.pesquisaParteNome(colaboradorDTO.getNome()).get(0);
+            ColaboradorDTO colaboradorDTOTemp = colaboradorNegocio.pesquisaCPF(colaboradorDTO.getCPF());
             colaboradorDTOTemp.setLink("/colaborador/" + colaboradorDTOTemp.getCodigo());
             resposta = Response.ok();
             resposta.entity(colaboradorDTOTemp);
@@ -66,7 +66,7 @@ public class ColaboradorServico {
         Response.ResponseBuilder resposta;
         try {
             colaboradorNegocio.excluir(codigo);
-            resposta = Response.ok();
+            resposta = Response.noContent();
         } catch (Exception ex) {
             resposta = Response.status(400);
             resposta.entity(new Mensagem(ex.getMessage()));
@@ -82,7 +82,7 @@ public class ColaboradorServico {
         try {
             ColaboradorDTO colaboradorDTO = colaboradorNegocio.pesquisaCodigo(codigo);
             colaboradorDTO.setLink("/colaborador/" + colaboradorDTO.getCodigo());
-            resposta = Response.noContent();
+            resposta = Response.ok();
             resposta.entity(colaboradorDTO);
         } catch (Exception ex) {
             resposta = Response.status(400);

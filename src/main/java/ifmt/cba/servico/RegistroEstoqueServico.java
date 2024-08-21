@@ -3,7 +3,6 @@ package ifmt.cba.servico;
 
 import ifmt.cba.dto.MovimentoEstoqueDTO;
 import ifmt.cba.dto.RegistroEstoqueDTO;
-import ifmt.cba.negocio.ProdutoNegocio;
 import ifmt.cba.negocio.RegistroEstoqueNegocio;
 import ifmt.cba.persistencia.FabricaEntityManager;
 import ifmt.cba.persistencia.PersistenciaException;
