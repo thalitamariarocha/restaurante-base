@@ -16,6 +16,7 @@ import jakarta.ws.rs.PUT;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.QueryParam;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.Response.ResponseBuilder;
@@ -43,7 +44,7 @@ public class EntregadorServico {
         try {
             entregadorNegocio.inserir(entregadorDTO);
             EntregadorDTO entregadorDTOTemp = entregadorNegocio.pesquisaParteNome(entregadorDTO.getNome()).get(0);
-            entregadorDTOTemp.setLink("/entregador/codigo/"+entregadorDTOTemp.getCodigo());
+            entregadorDTOTemp.setLink("/entregador/"+entregadorDTOTemp.getCodigo());
             resposta = Response.ok();
             resposta.entity(entregadorDTOTemp);
         } catch (Exception ex) {
@@ -61,7 +62,7 @@ public class EntregadorServico {
         try {
             entregadorNegocio.alterar(entregadorDTO);
             EntregadorDTO entregadorDTOTemp = entregadorNegocio.pesquisaCodigo(entregadorDTO.getCodigo());
-            entregadorDTOTemp.setLink("/entregador/codigo/"+entregadorDTOTemp.getCodigo());
+            entregadorDTOTemp.setLink("/entregador/"+entregadorDTOTemp.getCodigo());
             resposta = Response.ok();
             resposta.entity(entregadorDTOTemp);
         } catch (Exception ex) {
@@ -87,13 +88,13 @@ public class EntregadorServico {
     }
 
     @GET
-    @Path("/codigo/{codigo}")
+    @Path("/{codigo}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response buscarPorCodigo(@PathParam("codigo") int codigo) {
         ResponseBuilder resposta;
         try {
             EntregadorDTO entregadorDTO = entregadorNegocio.pesquisaCodigo(codigo);
-            entregadorDTO.setLink("/entregador/codigo/"+entregadorDTO.getCodigo());
+            entregadorDTO.setLink("/entregador/"+entregadorDTO.getCodigo());
             resposta = Response.ok();
             resposta.entity(entregadorDTO);
         } catch (Exception ex) {
@@ -104,14 +105,13 @@ public class EntregadorServico {
     }
 
     @GET
-    @Path("/nome/{nome}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response buscarPorNome(@PathParam("nome") String nome) {
+    public Response buscarPorNome(@QueryParam("nome") String nome) {
         ResponseBuilder resposta;
         try {
             List<EntregadorDTO> listaEntregadorDTO = entregadorNegocio.pesquisaParteNome(nome);
             for (EntregadorDTO entregadorDTO : listaEntregadorDTO) {
-                entregadorDTO.setLink("/entregador/codigo/"+entregadorDTO.getCodigo());
+                entregadorDTO.setLink("/entregador/"+entregadorDTO.getCodigo());
             }
             resposta = Response.ok();
             resposta.entity(listaEntregadorDTO);

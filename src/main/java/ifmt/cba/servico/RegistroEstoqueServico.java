@@ -18,10 +18,8 @@ import java.util.List;
 
 @Path("/registroEstoque")
 public class RegistroEstoqueServico {
-
     private static RegistroEstoqueNegocio registroEstoqueNegocio;
     private static RegistroEstoqueDAO registroEstoqueDAO;
-    private static ProdutoNegocio produtoNegocio;
     private static ProdutoDAO produtoDAO;
 
     static {
@@ -41,7 +39,7 @@ public class RegistroEstoqueServico {
         try {
             registroEstoqueNegocio.inserir(registroEstoqueDTO);
             RegistroEstoqueDTO registroEstoqueDTOTemp = registroEstoqueNegocio.pesquisaCodigo(registroEstoqueDTO.getCodigo());
-            registroEstoqueDTOTemp.setLink("/registroEstoque/codigo/" + registroEstoqueDTOTemp.getCodigo());
+            registroEstoqueDTOTemp.setLink("/registroEstoque/" + registroEstoqueDTOTemp.getCodigo());
             resposta = Response.ok();
             resposta.entity(registroEstoqueDTOTemp);
         } catch (Exception ex) {
@@ -68,7 +66,7 @@ public class RegistroEstoqueServico {
     }
 
     @GET
-    @Path("/codigo/{codigo}")
+    @Path("/{codigo}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response pesquisarCodigo(@PathParam("codigo") int codigo) {
         Response.ResponseBuilder resposta;
@@ -91,7 +89,7 @@ public class RegistroEstoqueServico {
         try {
             List<RegistroEstoqueDTO> listaEstoqueDTO = registroEstoqueNegocio.buscarPorMovimento(MovimentoEstoqueDTO.valueOf(movimento));
             for (RegistroEstoqueDTO registroEstoque : listaEstoqueDTO) {
-                registroEstoque.setLink("/registroEstoque/codigo/" + registroEstoque.getCodigo());
+                registroEstoque.setLink("/registroEstoque/" + registroEstoque.getCodigo());
             }
 
             resposta = Response.ok();
@@ -103,7 +101,6 @@ public class RegistroEstoqueServico {
         return resposta.build();
     }
 
-   //buscaPorMovimentoEData
     @GET
     @Path("/movimento/{movimento}/data/{data}")
     @Produces(MediaType.APPLICATION_JSON)
@@ -112,7 +109,7 @@ public class RegistroEstoqueServico {
         try {
             List<RegistroEstoqueDTO> listaEstoqueDTO = registroEstoqueNegocio.buscarPorMovimentoEData(MovimentoEstoqueDTO.valueOf(movimento), LocalDate.parse(data));
             for (RegistroEstoqueDTO registroEstoque : listaEstoqueDTO) {
-                registroEstoque.setLink("/registroEstoque/codigo/" + registroEstoque.getCodigo());
+                registroEstoque.setLink("/registroEstoque/" + registroEstoque.getCodigo());
             }
 
             resposta = Response.ok();
@@ -144,13 +141,6 @@ public class RegistroEstoqueServico {
 //        }
 //        return resposta.build();
 //    }
-
-
-
-
-
-
-
 
 
 }
