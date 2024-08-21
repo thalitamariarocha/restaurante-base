@@ -14,6 +14,7 @@ import jakarta.ws.rs.PUT;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.QueryParam;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.Response.ResponseBuilder;
@@ -43,7 +44,7 @@ public class CardapioServico {
         try {
             cardapioNegocio.inserir(cardapioDTO);
             CardapioDTO cardapioDTOTemp = cardapioNegocio.pesquisaPorNome(cardapioDTO.getNome()).get(0);
-            cardapioDTOTemp.setLink("/cardapio/codigo/" + cardapioDTOTemp.getCodigo());
+            cardapioDTOTemp.setLink("/cardapio/" + cardapioDTOTemp.getCodigo());
             resposta = Response.ok();
             resposta.entity(cardapioDTOTemp);
         } catch (Exception ex) {
@@ -61,7 +62,7 @@ public class CardapioServico {
         try {
             cardapioNegocio.alterar(cardapioDTO);
             CardapioDTO cardapioDTOTemp = cardapioNegocio.pesquisaCodigo(cardapioDTO.getCodigo());
-            cardapioDTOTemp.setLink("/cardapio/codigo/" + cardapioDTOTemp.getCodigo());
+            cardapioDTOTemp.setLink("/cardapio/" + cardapioDTOTemp.getCodigo());
             resposta = Response.ok();
             resposta.entity(cardapioDTOTemp);
         } catch (Exception ex) {
@@ -87,13 +88,13 @@ public class CardapioServico {
     }
 
     @GET
-    @Path("/codigo/{codigo}")
+    @Path("/{codigo}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response buscarPorCodigo(@PathParam("codigo") int codigo) {
         ResponseBuilder resposta;
         try {
             CardapioDTO cardapioDTO = cardapioNegocio.pesquisaCodigo(codigo);
-            cardapioDTO.setLink("/cardapio/codigo/" + cardapioDTO.getCodigo());
+            cardapioDTO.setLink("/cardapio/" + cardapioDTO.getCodigo());
             resposta = Response.ok();
             resposta.entity(cardapioDTO);
         } catch (Exception ex) {
@@ -104,14 +105,13 @@ public class CardapioServico {
     }
 
     @GET
-    @Path("/nome/{nome}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response buscarProdutoPorNome(@PathParam("nome") String nome) {
+    public Response buscarProdutoPorNome(@QueryParam("nome") String nome) {
         ResponseBuilder resposta;
         try {
             List<CardapioDTO> listaCardapioDTO = cardapioNegocio.pesquisaPorNome(nome);
             for(CardapioDTO cardapioDTO : listaCardapioDTO){
-                cardapioDTO.setLink("/cardapio/codigo/" + cardapioDTO.getCodigo());
+                cardapioDTO.setLink("/cardapio/" + cardapioDTO.getCodigo());
             }
 
             //CardapioDTO cardapioDTO = cardapioNegocio.pesquisaPorNome(nome).get(0);
