@@ -31,14 +31,13 @@ public class BairroServico {
         Response.ResponseBuilder resposta;
         try {
             bairroNegocio.inserir(bairroDTO);
-            BairroDTO bairroDTOTemp = bairroNegocio.pesquisaCodigo(bairroDTO.getCodigo());
+            BairroDTO bairroDTOTemp = bairroNegocio.pesquisaParteNome(bairroDTO.getNome()).get(0);
             bairroDTOTemp.setLink("/bairro/" + bairroDTOTemp.getCodigo());
             resposta = Response.ok();
             resposta.entity(bairroDTOTemp);
         } catch (Exception ex) {
             resposta = Response.status(400);
-            resposta.entity(ex.getMessage());
-
+            resposta.entity(new Mensagem(ex.getMessage()));
         }
         return resposta.build();
     }
@@ -57,7 +56,7 @@ public class BairroServico {
             resposta.entity(bairroDTOTemp);
         } catch (Exception ex) {
             resposta = Response.status(400);
-            resposta.entity(ex.getMessage());
+            resposta.entity(new Mensagem(ex.getMessage()));
         }
         return resposta.build();
     }

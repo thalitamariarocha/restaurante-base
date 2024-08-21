@@ -51,6 +51,7 @@ public class ClienteServico {
             resposta = Response.ok();
             resposta.entity(clienteDTOTemp);
         } catch (Exception ex) {
+            ex.printStackTrace();
             resposta = Response.status(400);
             resposta.entity(new Mensagem(ex.getMessage()));
         }
