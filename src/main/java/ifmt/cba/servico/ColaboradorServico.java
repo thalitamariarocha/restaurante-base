@@ -70,7 +70,7 @@ public class ColaboradorServico {
             try {
                 ColaboradorDTO colaboradorDTO = colaboradorNegocio.pesquisaCodigo(codigo);
                 colaboradorDTO.setLink("/colaborador/codigo/" + colaboradorDTO.getCodigo());
-                resposta = Response.ok();
+                resposta = Response.noContent();
                 resposta.entity(colaboradorDTO);
             } catch (Exception ex) {
                 resposta = Response.status(400);

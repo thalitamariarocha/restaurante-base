@@ -59,8 +59,7 @@ public class RegistroEstoqueServico {
         try {
             RegistroEstoqueDTO registroEstoqueDTO = registroEstoqueNegocio.pesquisaCodigo(codigo);
             registroEstoqueNegocio.excluir(registroEstoqueDTO);
-            resposta = Response.ok();
-            resposta.entity(registroEstoqueDTO);
+            resposta = Response.noContent();
         } catch (Exception ex) {
             resposta = Response.status(400);
             resposta.entity(new Mensagem(ex.getMessage()));

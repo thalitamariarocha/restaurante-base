@@ -78,7 +78,7 @@ public class EntregadorServico {
         ResponseBuilder resposta;
         try {
             entregadorNegocio.excluir(codigo);
-            resposta = Response.ok();
+            resposta = Response.noContent();
         } catch (Exception ex) {
             resposta = Response.status(400);
             resposta.entity(new Mensagem(ex.getMessage()));

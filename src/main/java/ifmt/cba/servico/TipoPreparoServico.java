@@ -81,8 +81,7 @@ public class TipoPreparoServico {
         ResponseBuilder resposta;
         try {
             tipoPreparoNegocio.excluir(codigo);
-            resposta = Response.ok();
-            resposta.entity(tipoPreparoNegocio.pesquisaCodigo(codigo));
+            resposta = Response.noContent();
         } catch (Exception ex) {
             resposta = Response.status(400);
             resposta.entity(new Mensagem(ex.getMessage()));

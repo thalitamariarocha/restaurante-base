@@ -133,7 +133,6 @@ public class PreparoProdutoServico {
             for (PreparoProdutoDTO preparoProdutoDTO : listaPreparoProdutoDTO) {
                 preparoProdutoDTO.setLink("/preparo-produto/" + preparoProdutoDTO.getCodigo());
             }
-            System.out.println(listaPreparoProdutoDTO);
             resposta = Response.ok();
             resposta.entity(listaPreparoProdutoDTO);
         } catch (Exception ex) {

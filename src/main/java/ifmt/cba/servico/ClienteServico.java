@@ -81,7 +81,7 @@ public class ClienteServico {
         ResponseBuilder resposta;
         try {
             clienteNegocio.excluir(codigo);
-            resposta = Response.ok();
+            resposta = Response.noContent();
         } catch (Exception ex) {
             resposta = Response.status(400);
             resposta.entity(new Mensagem(ex.getMessage()));

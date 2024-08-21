@@ -69,7 +69,7 @@ public class BairroServico {
         Response.ResponseBuilder resposta;
         try {
             bairroNegocio.excluir(codigo);
-            resposta = Response.ok();
+            resposta = Response.noContent();
         } catch (Exception ex) {
             resposta = Response.status(400);
             resposta.entity(new Mensagem(ex.getMessage()));

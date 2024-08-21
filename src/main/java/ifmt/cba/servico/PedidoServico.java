@@ -94,7 +94,7 @@ public class PedidoServico {
         ResponseBuilder resposta;
         try {
             pedidoNegocio.excluir(pedidoNegocio.pesquisaCodigo(codigo));
-            resposta = Response.ok();
+            resposta = Response.noContent();
         } catch (Exception ex) {
             resposta = Response.status(400);
             resposta.entity(new Mensagem(ex.getMessage()));
@@ -339,7 +339,6 @@ public class PedidoServico {
         }
         return resposta.build();
     }
-
     
     @GET
     @Path("/media-tempo-registrado-pronto")

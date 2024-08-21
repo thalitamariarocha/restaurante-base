@@ -78,7 +78,7 @@ public class CardapioServico {
         ResponseBuilder resposta;
         try {
             cardapioNegocio.excluir(codigo);
-            resposta = Response.ok();
+            resposta = Response.noContent();
         } catch (Exception ex) {
             resposta = Response.status(400);
             resposta.entity(new Mensagem(ex.getMessage()));
