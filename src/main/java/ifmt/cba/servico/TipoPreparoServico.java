@@ -8,7 +8,7 @@ import ifmt.cba.negocio.TipoPreparoNegocio;
 import ifmt.cba.persistencia.FabricaEntityManager;
 import ifmt.cba.persistencia.PersistenciaException;
 import ifmt.cba.persistencia.TipoPreparoDAO;
-import ifmt.cba.servico.util.MensagemErro;
+import ifmt.cba.servico.util.Mensagem;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.DELETE;
 import jakarta.ws.rs.GET;
@@ -17,11 +17,12 @@ import jakarta.ws.rs.PUT;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.QueryParam;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.Response.ResponseBuilder;
 
-@Path("/tipopreparo")
+@Path("/tipo-preparo")
 public class TipoPreparoServico {
     
     private static TipoPreparoNegocio tipoPreparoNegocio;
@@ -44,12 +45,12 @@ public class TipoPreparoServico {
         try {
             tipoPreparoNegocio.inserir(tipoPreparoDTO);
             TipoPreparoDTO tipoPreparoDTOTemp = tipoPreparoNegocio.pesquisaParteDescricao(tipoPreparoDTO.getDescricao()).get(0);
-            tipoPreparoDTOTemp.setLink("/tipopreparo/codigo/"+tipoPreparoDTOTemp.getCodigo());
+            tipoPreparoDTOTemp.setLink("/tipo-preparo/"+tipoPreparoDTOTemp.getCodigo());
             resposta = Response.ok();
             resposta.entity(tipoPreparoDTOTemp);
         } catch (Exception ex) {
             resposta = Response.status(400);
-            resposta.entity(new MensagemErro(ex.getMessage()));
+            resposta.entity(new Mensagem(ex.getMessage()));
         }
         return resposta.build();
     }
@@ -62,12 +63,12 @@ public class TipoPreparoServico {
         try {
             tipoPreparoNegocio.alterar(tipoPreparoDTO);
             TipoPreparoDTO tipoPreparoDTOTemp = tipoPreparoNegocio.pesquisaCodigo(tipoPreparoDTO.getCodigo());
-            tipoPreparoDTOTemp.setLink("/tipopreparo/codigo/"+tipoPreparoDTOTemp.getCodigo());
+            tipoPreparoDTOTemp.setLink("/tipo-preparo/"+tipoPreparoDTOTemp.getCodigo());
             resposta = Response.ok();
             resposta.entity(tipoPreparoDTOTemp);
         } catch (Exception ex) {
             resposta = Response.status(400);
-            resposta.entity(new MensagemErro(ex.getMessage()));
+            resposta.entity(new Mensagem(ex.getMessage()));
 
         }
         return resposta.build();
@@ -80,48 +81,46 @@ public class TipoPreparoServico {
         ResponseBuilder resposta;
         try {
             tipoPreparoNegocio.excluir(codigo);
-            resposta = Response.ok();
-            resposta.entity(tipoPreparoNegocio.pesquisaCodigo(codigo));
+            resposta = Response.noContent();
         } catch (Exception ex) {
             resposta = Response.status(400);
-            resposta.entity(new MensagemErro(ex.getMessage()));
+            resposta.entity(new Mensagem(ex.getMessage()));
         }
         return resposta.build();
     }
 
     @GET
-    @Path("/codigo/{codigo}")
+    @Path("/{codigo}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response buscarTipoPreparoPorCodigo(@PathParam("codigo") int codigo) {
         ResponseBuilder resposta;
         try {
             tipoPreparoNegocio.pesquisaCodigo(codigo);
             TipoPreparoDTO tipoPreparoDTOTemp = tipoPreparoNegocio.pesquisaCodigo(codigo);
-            tipoPreparoDTOTemp.setLink("/tipopreparo/codigo/"+tipoPreparoDTOTemp.getCodigo());
+            tipoPreparoDTOTemp.setLink("/tipo-preparo/"+tipoPreparoDTOTemp.getCodigo());
             resposta = Response.ok();
             resposta.entity(tipoPreparoDTOTemp);
         } catch (Exception ex) {
             resposta = Response.status(400);
-            resposta.entity(new MensagemErro(ex.getMessage()));
+            resposta.entity(new Mensagem(ex.getMessage()));
         }
         return resposta.build();
     }
 
     @GET
-    @Path("/nome/{nome}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response buscarTipoPreparoPorNome(@PathParam("nome") String descricao) {
+    public Response buscarTipoPreparoPorNome(@QueryParam("nome") String descricao) {
         ResponseBuilder resposta;
         try {
             List<TipoPreparoDTO> listaTipoPreparoDTO = tipoPreparoNegocio.pesquisaParteDescricao(descricao);
             for (TipoPreparoDTO tipoPreparoDTO : listaTipoPreparoDTO) {
-                tipoPreparoDTO.setLink("/tipopreparo/codigo/"+tipoPreparoDTO.getCodigo());
+                tipoPreparoDTO.setLink("/tipo-preparo/"+tipoPreparoDTO.getCodigo());
             }
             resposta = Response.ok();
             resposta.entity(listaTipoPreparoDTO);
         } catch (Exception ex) {
             resposta = Response.status(400);
-            resposta.entity(new MensagemErro(ex.getMessage()));
+            resposta.entity(new Mensagem(ex.getMessage()));
         }
         return resposta.build();
     }

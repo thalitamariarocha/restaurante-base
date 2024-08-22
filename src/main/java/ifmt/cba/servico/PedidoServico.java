@@ -9,6 +9,7 @@ import java.util.List;
 import ifmt.cba.dto.ClienteDTO;
 import ifmt.cba.dto.EstadoPedidoDTO;
 import ifmt.cba.dto.PedidoDTO;
+import ifmt.cba.negocio.ClienteNegocio;
 import ifmt.cba.negocio.NegocioException;
 import ifmt.cba.negocio.PedidoNegocio;
 import ifmt.cba.persistencia.ClienteDAO;
@@ -16,7 +17,7 @@ import ifmt.cba.persistencia.FabricaEntityManager;
 import ifmt.cba.persistencia.ItemPedidoDAO;
 import ifmt.cba.persistencia.PedidoDAO;
 import ifmt.cba.persistencia.PersistenciaException;
-import ifmt.cba.servico.util.MensagemErro;
+import ifmt.cba.servico.util.Mensagem;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.DELETE;
 import jakarta.ws.rs.GET;
@@ -34,6 +35,7 @@ import jakarta.ws.rs.core.Response.ResponseBuilder;
 public class PedidoServico {
 
     private static PedidoNegocio pedidoNegocio;
+    private static ClienteNegocio clienteNegocio;
     private static PedidoDAO pedidoDAO;
     private static ClienteDAO clienteDAO;
 
@@ -43,6 +45,7 @@ public class PedidoServico {
             ItemPedidoDAO itemPedidoDAO = new ItemPedidoDAO(FabricaEntityManager.getEntityManagerProducao());
             clienteDAO = new ClienteDAO(FabricaEntityManager.getEntityManagerProducao());
             pedidoNegocio = new PedidoNegocio(pedidoDAO, itemPedidoDAO, clienteDAO);
+            clienteNegocio = new ClienteNegocio(clienteDAO, pedidoDAO);
         } catch (PersistenciaException e) {
             e.printStackTrace();
         }
@@ -61,7 +64,7 @@ public class PedidoServico {
             resposta.entity(pedidoDTOTemp);
         } catch (Exception ex) {
             resposta = Response.status(400);
-            resposta.entity(new MensagemErro(ex.getMessage()));
+            resposta.entity(new Mensagem(ex.getMessage()));
         }
         return resposta.build();
     }
@@ -79,7 +82,7 @@ public class PedidoServico {
             resposta.entity(pedidoDTOTemp);
         } catch (Exception ex) {
             resposta = Response.status(400);
-            resposta.entity(new MensagemErro(ex.getMessage()));
+            resposta.entity(new Mensagem(ex.getMessage()));
         }
         return resposta.build();
     }
@@ -91,10 +94,10 @@ public class PedidoServico {
         ResponseBuilder resposta;
         try {
             pedidoNegocio.excluir(pedidoNegocio.pesquisaCodigo(codigo));
-            resposta = Response.ok();
+            resposta = Response.noContent();
         } catch (Exception ex) {
             resposta = Response.status(400);
-            resposta.entity(new MensagemErro(ex.getMessage()));
+            resposta.entity(new Mensagem(ex.getMessage()));
         }
         return resposta.build();
     }
@@ -115,7 +118,7 @@ public class PedidoServico {
             resposta.entity(pedidoDTOTemp);
         } catch (Exception ex) {
             resposta = Response.status(400);
-            resposta.entity(new MensagemErro(ex.getMessage()));
+            resposta.entity(new Mensagem(ex.getMessage()));
         }
         return resposta.build();
     }
@@ -136,7 +139,7 @@ public class PedidoServico {
             resposta.entity(pedidoNegocio.pesquisaCodigo(pedidoDTO.getCodigo()));
         } catch (Exception ex) {
             resposta = Response.status(400);
-            resposta.entity(new MensagemErro(ex.getMessage()));
+            resposta.entity(new Mensagem(ex.getMessage()));
         }
         return resposta.build();
     }
@@ -156,7 +159,7 @@ public class PedidoServico {
             resposta.entity(pedidoDTOTemp);
         } catch (Exception ex) {
             resposta = Response.status(400);
-            resposta.entity(new MensagemErro(ex.getMessage()));
+            resposta.entity(new Mensagem(ex.getMessage()));
         }
         return resposta.build();
     }
@@ -175,7 +178,7 @@ public class PedidoServico {
             resposta.entity(pedidoDTOTemp);
         } catch (Exception ex) {
             resposta = Response.status(400);
-            resposta.entity(new MensagemErro(ex.getMessage()));
+            resposta.entity(new Mensagem(ex.getMessage()));
         }
         return resposta.build();
     }
@@ -193,7 +196,7 @@ public class PedidoServico {
             resposta.entity(pedidoDTOTemp);
         } catch (Exception ex) {
             resposta = Response.status(400);
-            resposta.entity(new MensagemErro(ex.getMessage()));
+            resposta.entity(new Mensagem(ex.getMessage()));
         }
         return resposta.build();
     }
@@ -213,7 +216,7 @@ public class PedidoServico {
             resposta.entity(listaPedidoDTO);
         } catch (Exception ex) {
             resposta = Response.status(400);
-            resposta.entity(new MensagemErro(ex.getMessage()));
+            resposta.entity(new Mensagem(ex.getMessage()));
         }
         return resposta.build();
     }
@@ -232,7 +235,7 @@ public class PedidoServico {
             resposta.entity(listaPedidoDTO);
         } catch (Exception ex) {
             resposta = Response.status(400);
-            resposta.entity(new MensagemErro(ex.getMessage()));
+            resposta.entity(new Mensagem(ex.getMessage()));
         }
         return resposta.build();
     }
@@ -252,17 +255,18 @@ public class PedidoServico {
             resposta.entity(listaPedidoDTO);
         } catch (Exception ex) {
             resposta = Response.status(400);
-            resposta.entity(new MensagemErro(ex.getMessage()));
+            resposta.entity(new Mensagem(ex.getMessage()));
         }
         return resposta.build();
     }
 
     @GET
-    @Path("/cliente")
+    @Path("/cliente/{codigo}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response buscarPorCliente(ClienteDTO clienteDTO) {
+    public Response buscarPorCliente(@PathParam("codigo") int codigo) {
         ResponseBuilder resposta;
         try {
+            ClienteDTO clienteDTO = clienteNegocio.pesquisaCodigo(codigo);
             List<PedidoDTO> listaPedidoDTO = pedidoNegocio.pesquisaPorCliente(clienteDTO);
             for (PedidoDTO pedidoDTO : listaPedidoDTO) {
                 pedidoDTO.setLink("/pedido/cliente/" + pedidoDTO.getCodigo());
@@ -271,7 +275,7 @@ public class PedidoServico {
             resposta.entity(listaPedidoDTO);
         } catch (Exception ex) {
             resposta = Response.status(400);
-            resposta.entity(new MensagemErro(ex.getMessage()));
+            resposta.entity(new Mensagem(ex.getMessage()));
         }
         return resposta.build();
     }
@@ -295,19 +299,18 @@ public class PedidoServico {
         } catch (NegocioException ex) {
             // Tratar exceção de negócio
             resposta = Response.status(400);
-            resposta.entity(new MensagemErro(ex.getMessage()));
+            resposta.entity(new Mensagem(ex.getMessage()));
         } catch (DateTimeParseException ex) {
             // Tratar exceção de parsing de data
             resposta = Response.status(400);
-            resposta.entity(new MensagemErro("Formato de data inválido: " + ex.getParsedString()));
+            resposta.entity(new Mensagem("Formato de data inválido: " + ex.getParsedString()));
         } catch (Exception ex) {
             // Tratar outras exceções
             resposta = Response.status(500);
-            resposta.entity(new MensagemErro("Erro inesperado: " + ex.getMessage()));
+            resposta.entity(new Mensagem("Erro inesperado: " + ex.getMessage()));
         }
         return resposta.build();
     }
-
 
     @GET
     @Path("/media-tempo-pronto-concluido")
@@ -328,16 +331,15 @@ public class PedidoServico {
         } catch (NegocioException ex) {
 
             resposta = Response.status(400);
-            resposta.entity(new MensagemErro(ex.getMessage()));
+            resposta.entity(new Mensagem(ex.getMessage()));
         } catch (Exception ex) {
 
             resposta = Response.status(500);
-            resposta.entity(new MensagemErro("Erro inesperado: " + ex.getMessage()));
+            resposta.entity(new Mensagem("Erro inesperado: " + ex.getMessage()));
         }
         return resposta.build();
     }
-
-
+    
     @GET
     @Path("/media-tempo-registrado-pronto")
     @Produces(MediaType.APPLICATION_JSON)
@@ -359,14 +361,25 @@ public class PedidoServico {
         } catch (NegocioException ex) {
 
             resposta = Response.status(400);
-            resposta.entity(new MensagemErro(ex.getMessage()));
+            resposta.entity(new Mensagem(ex.getMessage()));
         } catch (Exception ex) {
 
             resposta = Response.status(500);
-            resposta.entity(new MensagemErro("Erro inesperado: " + ex.getMessage()));
+            resposta.entity(new Mensagem("Erro inesperado: " + ex.getMessage()));
         }
         return resposta.build();
     }
 
+    // tempo médio entre o término da produção de uma refeição e a finalização da entrega ao cliente
+//    @GET
+//    @Path("/tempo")
+//    @Produces(MediaType.APPLICATION_JSON)
+//    public Response tempoMedioEntrega() {
+//        ResponseBuilder resposta;
+//        try {
+//            List<PedidoDTO> listaPedidoDTO = pedidoNegocio.toDTOAll();
+//
+//
+//    }
 
 }

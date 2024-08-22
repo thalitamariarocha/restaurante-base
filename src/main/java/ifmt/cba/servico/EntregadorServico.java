@@ -7,7 +7,7 @@ import ifmt.cba.negocio.EntregadorNegocio;
 import ifmt.cba.persistencia.EntregadorDAO;
 import ifmt.cba.persistencia.FabricaEntityManager;
 import ifmt.cba.persistencia.PersistenciaException;
-import ifmt.cba.servico.util.MensagemErro;
+import ifmt.cba.servico.util.Mensagem;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.DELETE;
 import jakarta.ws.rs.GET;
@@ -16,6 +16,7 @@ import jakarta.ws.rs.PUT;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.QueryParam;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.Response.ResponseBuilder;
@@ -43,12 +44,12 @@ public class EntregadorServico {
         try {
             entregadorNegocio.inserir(entregadorDTO);
             EntregadorDTO entregadorDTOTemp = entregadorNegocio.pesquisaParteNome(entregadorDTO.getNome()).get(0);
-            entregadorDTOTemp.setLink("/entregador/codigo/"+entregadorDTOTemp.getCodigo());
+            entregadorDTOTemp.setLink("/entregador/"+entregadorDTOTemp.getCodigo());
             resposta = Response.ok();
             resposta.entity(entregadorDTOTemp);
         } catch (Exception ex) {
             resposta = Response.status(400);
-            resposta.entity(new MensagemErro(ex.getMessage()));
+            resposta.entity(new Mensagem(ex.getMessage()));
         }
         return resposta.build();
     }
@@ -61,12 +62,12 @@ public class EntregadorServico {
         try {
             entregadorNegocio.alterar(entregadorDTO);
             EntregadorDTO entregadorDTOTemp = entregadorNegocio.pesquisaCodigo(entregadorDTO.getCodigo());
-            entregadorDTOTemp.setLink("/entregador/codigo/"+entregadorDTOTemp.getCodigo());
+            entregadorDTOTemp.setLink("/entregador/"+entregadorDTOTemp.getCodigo());
             resposta = Response.ok();
             resposta.entity(entregadorDTOTemp);
         } catch (Exception ex) {
             resposta = Response.status(400);
-            resposta.entity(new MensagemErro(ex.getMessage()));
+            resposta.entity(new Mensagem(ex.getMessage()));
         }
         return resposta.build();
     }
@@ -78,46 +79,45 @@ public class EntregadorServico {
         ResponseBuilder resposta;
         try {
             entregadorNegocio.excluir(codigo);
-            resposta = Response.ok();
+            resposta = Response.noContent();
         } catch (Exception ex) {
             resposta = Response.status(400);
-            resposta.entity(new MensagemErro(ex.getMessage()));
+            resposta.entity(new Mensagem(ex.getMessage()));
         }
         return resposta.build();
     }
 
     @GET
-    @Path("/codigo/{codigo}")
+    @Path("/{codigo}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response buscarPorCodigo(@PathParam("codigo") int codigo) {
         ResponseBuilder resposta;
         try {
             EntregadorDTO entregadorDTO = entregadorNegocio.pesquisaCodigo(codigo);
-            entregadorDTO.setLink("/entregador/codigo/"+entregadorDTO.getCodigo());
+            entregadorDTO.setLink("/entregador/"+entregadorDTO.getCodigo());
             resposta = Response.ok();
             resposta.entity(entregadorDTO);
         } catch (Exception ex) {
             resposta = Response.status(400);
-            resposta.entity(new MensagemErro(ex.getMessage()));
+            resposta.entity(new Mensagem(ex.getMessage()));
         }
         return resposta.build();
     }
 
     @GET
-    @Path("/nome/{nome}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response buscarPorNome(@PathParam("nome") String nome) {
+    public Response buscarPorNome(@QueryParam("nome") String nome) {
         ResponseBuilder resposta;
         try {
             List<EntregadorDTO> listaEntregadorDTO = entregadorNegocio.pesquisaParteNome(nome);
             for (EntregadorDTO entregadorDTO : listaEntregadorDTO) {
-                entregadorDTO.setLink("/entregador/codigo/"+entregadorDTO.getCodigo());
+                entregadorDTO.setLink("/entregador/"+entregadorDTO.getCodigo());
             }
             resposta = Response.ok();
             resposta.entity(listaEntregadorDTO);
         } catch (Exception ex) {
             resposta = Response.status(400);
-            resposta.entity(new MensagemErro(ex.getMessage()));
+            resposta.entity(new Mensagem(ex.getMessage()));
         }
         return resposta.build();
     }

@@ -9,7 +9,7 @@ import ifmt.cba.persistencia.FabricaEntityManager;
 import ifmt.cba.persistencia.GrupoAlimentarDAO;
 import ifmt.cba.persistencia.PersistenciaException;
 import ifmt.cba.persistencia.ProdutoDAO;
-import ifmt.cba.servico.util.MensagemErro;
+import ifmt.cba.servico.util.Mensagem;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.DELETE;
 import jakarta.ws.rs.GET;
@@ -18,11 +18,12 @@ import jakarta.ws.rs.PUT;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.QueryParam;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.Response.ResponseBuilder;
 //FEITO
-@Path("/grupoalimentar")
+@Path("/grupo-alimentar")
 public class GrupoAlimentarServico {
 
     private static GrupoAlimentarNegocio grupoAlimentarNegocio;
@@ -48,12 +49,12 @@ public class GrupoAlimentarServico {
         try {
             grupoAlimentarNegocio.inserir(grupoAlimentarDTO);
             GrupoAlimentarDTO grupoAlimentarDTOTemp = grupoAlimentarNegocio.pesquisaParteNome(grupoAlimentarDTO.getNome()).get(0);
-            grupoAlimentarDTOTemp.setLink("/grupoalimentar/codigo/"+grupoAlimentarDTOTemp.getCodigo());
+            grupoAlimentarDTOTemp.setLink("/grupo-alimentar/"+grupoAlimentarDTOTemp.getCodigo());
             resposta = Response.ok();
             resposta.entity(grupoAlimentarDTOTemp);
         } catch (Exception ex) {
             resposta = Response.status(400);
-            resposta.entity(new MensagemErro(ex.getMessage()));
+            resposta.entity(new Mensagem(ex.getMessage()));
         }
         return resposta.build();
     }
@@ -66,12 +67,12 @@ public class GrupoAlimentarServico {
         try {
             grupoAlimentarNegocio.alterar(grupoAlimentarDTO);
             GrupoAlimentarDTO grupoAlimentarDTOTemp = grupoAlimentarNegocio.pesquisaCodigo(grupoAlimentarDTO.getCodigo());
-            grupoAlimentarDTOTemp.setLink("/grupoalimentar/codigo/"+grupoAlimentarDTO.getCodigo());
+            grupoAlimentarDTOTemp.setLink("/grupo-alimentar/"+grupoAlimentarDTO.getCodigo());
             resposta = Response.ok();
             resposta.entity(grupoAlimentarDTOTemp);
         } catch (Exception ex) {
             resposta = Response.status(400);
-            resposta.entity(new MensagemErro(ex.getMessage()));
+            resposta.entity(new Mensagem(ex.getMessage()));
         }
         return resposta.build();
     }
@@ -86,43 +87,42 @@ public class GrupoAlimentarServico {
             resposta = Response.noContent();
         } catch (Exception ex) {
             resposta = Response.status(400);
-            resposta.entity(new MensagemErro(ex.getMessage()));
+            resposta.entity(new Mensagem(ex.getMessage()));
         }
         return resposta.build();
     }
 
     @GET
-    @Path("/codigo/{codigo}")
+    @Path("/{codigo}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response buscarGrupoAlimentarPorCodigo(@PathParam("codigo") int codigo) {
         ResponseBuilder resposta;
         try {
             GrupoAlimentarDTO grupoAlimentarDTO = grupoAlimentarNegocio.pesquisaCodigo(codigo);
-            grupoAlimentarDTO.setLink("/grupoalimentar/codigo/"+grupoAlimentarDTO.getCodigo());
+            grupoAlimentarDTO.setLink("/grupo-alimentar/"+grupoAlimentarDTO.getCodigo());
             resposta = Response.ok();
             resposta.entity(grupoAlimentarDTO);
         } catch (Exception ex) {
             resposta = Response.status(400);
-            resposta.entity(new MensagemErro(ex.getMessage()));
+            resposta.entity(new Mensagem(ex.getMessage()));
         }
         return resposta.build();
     }
 
     @GET
-    @Path("/nome/{nome}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response buscarGrupoAlimentarPorNome(@PathParam("nome") String nome) {
+    public Response buscarGrupoAlimentarPorNome(@QueryParam("nome") String nome) {
         ResponseBuilder resposta;
         try {
             List<GrupoAlimentarDTO> listaGrupoAlimentarDTO = grupoAlimentarNegocio.pesquisaParteNome(nome);
             for (GrupoAlimentarDTO grupoAlimentarDTO : listaGrupoAlimentarDTO) {
-                grupoAlimentarDTO.setLink("/grupoalimentar/codigo/"+grupoAlimentarDTO.getCodigo());
+                grupoAlimentarDTO.setLink("/grupo-alimentar/"+grupoAlimentarDTO.getCodigo());
             }
             resposta = Response.ok();
             resposta.entity(listaGrupoAlimentarDTO);
         } catch (Exception ex) {
             resposta = Response.status(400);
-            resposta.entity(new MensagemErro(ex.getMessage()));
+            resposta.entity(new Mensagem(ex.getMessage()));
         }
         return resposta.build();
     }

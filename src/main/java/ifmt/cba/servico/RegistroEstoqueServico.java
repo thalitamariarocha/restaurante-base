@@ -3,13 +3,12 @@ package ifmt.cba.servico;
 
 import ifmt.cba.dto.MovimentoEstoqueDTO;
 import ifmt.cba.dto.RegistroEstoqueDTO;
-import ifmt.cba.negocio.ProdutoNegocio;
 import ifmt.cba.negocio.RegistroEstoqueNegocio;
 import ifmt.cba.persistencia.FabricaEntityManager;
 import ifmt.cba.persistencia.PersistenciaException;
 import ifmt.cba.persistencia.ProdutoDAO;
 import ifmt.cba.persistencia.RegistroEstoqueDAO;
-import ifmt.cba.servico.util.MensagemErro;
+import ifmt.cba.servico.util.Mensagem;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.*;
 
@@ -18,10 +17,8 @@ import java.util.List;
 
 @Path("/registroEstoque")
 public class RegistroEstoqueServico {
-
     private static RegistroEstoqueNegocio registroEstoqueNegocio;
     private static RegistroEstoqueDAO registroEstoqueDAO;
-    private static ProdutoNegocio produtoNegocio;
     private static ProdutoDAO produtoDAO;
 
     static {
@@ -41,12 +38,12 @@ public class RegistroEstoqueServico {
         try {
             registroEstoqueNegocio.inserir(registroEstoqueDTO);
             RegistroEstoqueDTO registroEstoqueDTOTemp = registroEstoqueNegocio.pesquisaCodigo(registroEstoqueDTO.getCodigo());
-            registroEstoqueDTOTemp.setLink("/registroEstoque/codigo/" + registroEstoqueDTOTemp.getCodigo());
+            registroEstoqueDTOTemp.setLink("/registroEstoque/" + registroEstoqueDTOTemp.getCodigo());
             resposta = Response.ok();
             resposta.entity(registroEstoqueDTOTemp);
         } catch (Exception ex) {
             resposta = Response.status(400);
-            resposta.entity(new MensagemErro(ex.getMessage()));
+            resposta.entity(new Mensagem(ex.getMessage()));
         }
         return resposta.build();
     }
@@ -59,17 +56,16 @@ public class RegistroEstoqueServico {
         try {
             RegistroEstoqueDTO registroEstoqueDTO = registroEstoqueNegocio.pesquisaCodigo(codigo);
             registroEstoqueNegocio.excluir(registroEstoqueDTO);
-            resposta = Response.ok();
-            resposta.entity(registroEstoqueDTO);
+            resposta = Response.noContent();
         } catch (Exception ex) {
             resposta = Response.status(400);
-            resposta.entity(new MensagemErro(ex.getMessage()));
+            resposta.entity(new Mensagem(ex.getMessage()));
         }
         return resposta.build();
     }
 
     @GET
-    @Path("/codigo/{codigo}")
+    @Path("/{codigo}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response pesquisarCodigo(@PathParam("codigo") int codigo) {
         Response.ResponseBuilder resposta;
@@ -79,7 +75,7 @@ public class RegistroEstoqueServico {
             resposta.entity(registroEstoqueDTO);
         } catch (Exception ex) {
             resposta = Response.status(400);
-            resposta.entity(new MensagemErro(ex.getMessage()));
+            resposta.entity(new Mensagem(ex.getMessage()));
         }
         return resposta.build();
     }
@@ -92,19 +88,18 @@ public class RegistroEstoqueServico {
         try {
             List<RegistroEstoqueDTO> listaEstoqueDTO = registroEstoqueNegocio.buscarPorMovimento(MovimentoEstoqueDTO.valueOf(movimento));
             for (RegistroEstoqueDTO registroEstoque : listaEstoqueDTO) {
-                registroEstoque.setLink("/registroEstoque/codigo/" + registroEstoque.getCodigo());
+                registroEstoque.setLink("/registroEstoque/" + registroEstoque.getCodigo());
             }
 
             resposta = Response.ok();
             resposta.entity(listaEstoqueDTO);
         } catch (Exception ex) {
             resposta = Response.status(400);
-            resposta.entity(new MensagemErro(ex.getMessage()));
+            resposta.entity(new Mensagem(ex.getMessage()));
         }
         return resposta.build();
     }
 
-   //buscaPorMovimentoEData
     @GET
     @Path("/movimento/{movimento}/data/{data}")
     @Produces(MediaType.APPLICATION_JSON)
@@ -113,14 +108,14 @@ public class RegistroEstoqueServico {
         try {
             List<RegistroEstoqueDTO> listaEstoqueDTO = registroEstoqueNegocio.buscarPorMovimentoEData(MovimentoEstoqueDTO.valueOf(movimento), LocalDate.parse(data));
             for (RegistroEstoqueDTO registroEstoque : listaEstoqueDTO) {
-                registroEstoque.setLink("/registroEstoque/codigo/" + registroEstoque.getCodigo());
+                registroEstoque.setLink("/registroEstoque/" + registroEstoque.getCodigo());
             }
 
             resposta = Response.ok();
             resposta.entity(listaEstoqueDTO);
         } catch (Exception ex) {
             resposta = Response.status(400);
-            resposta.entity(new MensagemErro(ex.getMessage()));
+            resposta.entity(new Mensagem(ex.getMessage()));
         }
         return resposta.build();
     }
@@ -145,13 +140,6 @@ public class RegistroEstoqueServico {
 //        }
 //        return resposta.build();
 //    }
-
-
-
-
-
-
-
 
 
 }

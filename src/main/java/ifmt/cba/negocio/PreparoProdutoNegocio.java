@@ -79,7 +79,11 @@ public class PreparoProdutoNegocio {
 
 	public PreparoProdutoDTO pesquisaPorCodigo(int codigo) throws NegocioException {
 		try {
-			return this.toDTO(preparoProdutoDAO.buscarPorCodigo(codigo));
+			PreparoProduto preparoProduto = preparoProdutoDAO.buscarPorCodigo(codigo);
+			if (preparoProduto != null) {
+				return this.toDTO(preparoProduto);
+			}
+			return null;
 		} catch (PersistenciaException ex) {
 			throw new NegocioException("Erro ao pesquisar produto pelo codigo - " + ex.getMessage());
 		}
@@ -111,7 +115,11 @@ public class PreparoProdutoNegocio {
 
     public PreparoProdutoDTO pesquisaPorProdutoETipoPreparo(int codigoProduto, int codigoTipoPreparo) throws NegocioException {
 		try {
-			return this.toDTO(preparoProdutoDAO.buscarPorProdutoETipoPreparo(codigoProduto, codigoTipoPreparo));
+			PreparoProduto preparoProduto = preparoProdutoDAO.buscarPorProdutoETipoPreparo(codigoProduto, codigoTipoPreparo);
+			if (preparoProduto != null) {
+				return this.toDTO(preparoProduto);
+			}
+			return null;
 		} catch (PersistenciaException ex) {
 			throw new NegocioException("Erro ao pesquisar preparo de produto por produto e tipo preparo - " + ex.getMessage());
 		}
@@ -127,10 +135,16 @@ public class PreparoProdutoNegocio {
 	}
 
 	public PreparoProdutoDTO toDTO(PreparoProduto preparoProduto) {
+		if (preparoProduto == null) {
+			throw new IllegalArgumentException("PreparoProduto cannot be null");
+		}
 		return this.modelMapper.map(preparoProduto, PreparoProdutoDTO.class);
 	}
-
+	
 	public PreparoProduto toEntity(PreparoProdutoDTO preparoProdutoDTO) {
+		if (preparoProdutoDTO == null) {
+			throw new IllegalArgumentException("PreparoProdutoDTO cannot be null");
+		}
 		return this.modelMapper.map(preparoProdutoDTO, PreparoProduto.class);
 	}
 }

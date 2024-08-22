@@ -93,6 +93,14 @@ public class ColaboradorNegocio {
 		}
 	}
 
+	public ColaboradorDTO pesquisaCPF(String CPF) throws NegocioException {
+		try {
+			return this.toDTO(colaboradorDAO.buscarPorCPF(CPF));
+		} catch (PersistenciaException ex) {
+			throw new NegocioException("Erro ao pesquisar colaborador pelo CPF - " + ex.getMessage());
+		}
+	}
+
 	public List<ColaboradorDTO> toDTOAll(List<Colaborador> listaColaborador) {
 		List<ColaboradorDTO> listaDTO = new ArrayList<ColaboradorDTO>();
 

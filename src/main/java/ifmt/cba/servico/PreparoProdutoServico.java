@@ -7,7 +7,7 @@ import ifmt.cba.negocio.PreparoProdutoNegocio;
 import ifmt.cba.persistencia.FabricaEntityManager;
 import ifmt.cba.persistencia.PersistenciaException;
 import ifmt.cba.persistencia.PreparoProdutoDAO;
-import ifmt.cba.servico.util.MensagemErro;
+import ifmt.cba.servico.util.Mensagem;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.DELETE;
 import jakarta.ws.rs.GET;
@@ -16,11 +16,12 @@ import jakarta.ws.rs.PUT;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.QueryParam;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.Response.ResponseBuilder;
 
-@Path("/preparo")
+@Path("/preparo-produto")
 public class PreparoProdutoServico {
 
     private static PreparoProdutoNegocio preparoProdutoNegocio;
@@ -42,13 +43,13 @@ public class PreparoProdutoServico {
         ResponseBuilder resposta;
         try {
             preparoProdutoNegocio.inserir(preparoProdutoDTO);
-            PreparoProdutoDTO preparoProdutoDTOTemp = preparoProdutoNegocio.pesquisaPorCodigo(preparoProdutoDTO.getCodigo());
-            preparoProdutoDTOTemp.setLink("/preparo/codigo/" + preparoProdutoDTOTemp.getCodigo());
+            PreparoProdutoDTO preparoProdutoDTOTemp = preparoProdutoNegocio.pesquisaPorProdutoETipoPreparo(preparoProdutoDTO.getProduto().getCodigo(), preparoProdutoDTO.getTipoPreparo().getCodigo());
+            preparoProdutoDTOTemp.setLink("/preparo-produto/" + preparoProdutoDTOTemp.getCodigo());
             resposta = Response.ok();
             resposta.entity(preparoProdutoDTOTemp);
         } catch (Exception ex) {
             resposta = Response.status(400);
-            resposta.entity(new MensagemErro(ex.getMessage()));
+            resposta.entity(new Mensagem(ex.getMessage()));
         }
         return resposta.build();
     }
@@ -61,12 +62,12 @@ public class PreparoProdutoServico {
         try {
             preparoProdutoNegocio.alterar(preparoProdutoDTO);
             PreparoProdutoDTO preparoProdutoDTOTemp = preparoProdutoNegocio.pesquisaPorCodigo(preparoProdutoDTO.getCodigo());
-            preparoProdutoDTOTemp.setLink("/preparo/codigo/" + preparoProdutoDTOTemp.getCodigo());
+            preparoProdutoDTOTemp.setLink("/preparo-produto/" + preparoProdutoDTOTemp.getCodigo());
             resposta = Response.ok();
             resposta.entity(preparoProdutoDTOTemp);
         } catch (Exception ex) {
             resposta = Response.status(400);
-            resposta.entity(new MensagemErro(ex.getMessage()));
+            resposta.entity(new Mensagem(ex.getMessage()));
         }
         return resposta.build();
     }
@@ -78,47 +79,46 @@ public class PreparoProdutoServico {
         ResponseBuilder resposta;
         try {
             preparoProdutoNegocio.excluir(codigo);
-            resposta = Response.ok();
+            resposta = Response.noContent();
         } catch (Exception ex) {
             resposta = Response.status(400);
-            resposta.entity(new MensagemErro(ex.getMessage()));
+            resposta.entity(new Mensagem(ex.getMessage()));
         }
         return resposta.build();
     }
 
     @GET
-    @Path("/codigo/{codigo}")
+    @Path("/{codigo}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response buscarProdutoPorCodigo(@PathParam("codigo") int codigo) {
         ResponseBuilder resposta;
         try {
             preparoProdutoNegocio.pesquisaPorCodigo(codigo);
             PreparoProdutoDTO preparoProdutoDTOTemp = preparoProdutoNegocio.pesquisaPorCodigo(codigo);
-            preparoProdutoDTOTemp.setLink("/preparo/codigo/" + preparoProdutoDTOTemp.getCodigo());
+            preparoProdutoDTOTemp.setLink("/preparo-produto/" + preparoProdutoDTOTemp.getCodigo());
             resposta = Response.ok();
             resposta.entity(preparoProdutoDTOTemp);
         } catch (Exception ex) {
             resposta = Response.status(400);
-            resposta.entity(new MensagemErro(ex.getMessage()));
+            resposta.entity(new Mensagem(ex.getMessage()));
         }
         return resposta.build();
     }
 
     @GET
-    @Path("/nome/{nome}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response buscarPreparoProdutoPorNome(@PathParam("nome") String nome) {
+    public Response buscarPreparoProdutoPorNome(@QueryParam("nome") String nome) {
         ResponseBuilder resposta;
         try {
             List<PreparoProdutoDTO> listaPreparoProdutoDTO = preparoProdutoNegocio.pesquisaPorParteNome(nome);
             for (PreparoProdutoDTO preparoProdutoDTO : listaPreparoProdutoDTO) {
-                preparoProdutoDTO.setLink("/preparo/codigo/" + preparoProdutoDTO.getCodigo());
+                preparoProdutoDTO.setLink("/preparo-produto/" + preparoProdutoDTO.getCodigo());
             }
             resposta = Response.ok();
             resposta.entity(listaPreparoProdutoDTO);
         } catch (Exception ex) {
             resposta = Response.status(400);
-            resposta.entity(new MensagemErro(ex.getMessage()));
+            resposta.entity(new Mensagem(ex.getMessage()));
         }
         return resposta.build();
     }
@@ -131,13 +131,13 @@ public class PreparoProdutoServico {
         try {
             List<PreparoProdutoDTO> listaPreparoProdutoDTO = preparoProdutoNegocio.pesquisaPorProduto(codigoProduto);
             for (PreparoProdutoDTO preparoProdutoDTO : listaPreparoProdutoDTO) {
-                preparoProdutoDTO.setLink("/preparo/codigo/" + preparoProdutoDTO.getCodigo());
+                preparoProdutoDTO.setLink("/preparo-produto/" + preparoProdutoDTO.getCodigo());
             }
             resposta = Response.ok();
             resposta.entity(listaPreparoProdutoDTO);
         } catch (Exception ex) {
             resposta = Response.status(400);
-            resposta.entity(new MensagemErro(ex.getMessage()));
+            resposta.entity(new Mensagem(ex.getMessage()));
         }
         return resposta.build();
     }
