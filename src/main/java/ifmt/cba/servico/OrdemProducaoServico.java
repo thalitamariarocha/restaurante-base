@@ -1,5 +1,6 @@
 package ifmt.cba.servico;
 
+import ifmt.cba.dto.EstadoOrdemProducaoDTO;
 import ifmt.cba.dto.OrdemProducaoDTO;
 import ifmt.cba.negocio.NegocioException;
 import ifmt.cba.negocio.OrdemProducaoNegocio;
@@ -29,7 +30,6 @@ public class OrdemProducaoServico {
         }
     }
 
-    //implementar processarOrdemProducao
     @PUT
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
@@ -45,6 +45,9 @@ public class OrdemProducaoServico {
         }
         return resposta.build();
     }
+
+
+
 
 
 }

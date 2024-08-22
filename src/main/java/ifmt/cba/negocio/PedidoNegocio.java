@@ -176,18 +176,6 @@ public class PedidoNegocio {
 	}
 
 
-//	public EstadoPedidoDTO buscarEstadoPedido(PedidoDTO pedidoDTO) throws NegocioException {
-//		try {
-//			Pedido pedido = pedidoDAO.buscarPorCodigo(pedidoDTO.getCodigo());
-//			if (pedido != null) {
-//				return pedido.getEstado();
-//			} else {
-//				return null;
-//			}
-//		} catch (PersistenciaException ex) {
-//			throw new NegocioException("Erro ao pesquisar pedido pelo codigo - " + ex.getMessage());
-//		}
-//	}
 
 	public void mudarPedidoParaProducao(PedidoDTO pedidoDTO) throws NegocioException {
 
