@@ -9,6 +9,7 @@ import java.util.List;
 import ifmt.cba.dto.ClienteDTO;
 import ifmt.cba.dto.EstadoPedidoDTO;
 import ifmt.cba.dto.PedidoDTO;
+import ifmt.cba.dto.ProdutoDTO;
 import ifmt.cba.negocio.ClienteNegocio;
 import ifmt.cba.negocio.NegocioException;
 import ifmt.cba.negocio.PedidoNegocio;
@@ -57,13 +58,12 @@ public class PedidoServico {
     public Response adicionar(PedidoDTO pedidoDTO) {
         ResponseBuilder resposta;
         try {
-            pedidoNegocio.inserir(pedidoDTO);
+            int idGerado = pedidoNegocio.inserir(pedidoDTO);
 
-            //Não há nenhuma maneira de obter o pedidoDTO após a inserção
-            // PedidoDTO pedidoDTOTemp = pedidoNegocio.pesquisaCodigo(pedidoDTO.getCodigo());
-            // pedidoDTOTemp.setLink("/pedido/" + pedidoDTOTemp.getCodigo());
+            PedidoDTO pedidoDTOTemp = pedidoNegocio.pesquisaCodigo(idGerado);
+            pedidoDTOTemp.setLink("/pedido/" + pedidoDTOTemp.getCodigo());
             resposta = Response.ok();
-            // resposta.entity(pedidoDTOTemp);
+            resposta.entity(pedidoDTOTemp);
         } catch (Exception ex) {
             resposta = Response.status(400);
             resposta.entity(new Mensagem(ex.getMessage()));
@@ -95,7 +95,9 @@ public class PedidoServico {
     public Response excluir(@PathParam("codigo") int codigo) {
         ResponseBuilder resposta;
         try {
-            pedidoNegocio.excluir(pedidoNegocio.pesquisaCodigo(codigo));
+            PedidoDTO pedidoDTO = new PedidoDTO();
+            pedidoDTO.setCodigo(codigo);
+            pedidoNegocio.excluir(pedidoDTO);
             resposta = Response.noContent();
         } catch (Exception ex) {
             resposta = Response.status(400);
