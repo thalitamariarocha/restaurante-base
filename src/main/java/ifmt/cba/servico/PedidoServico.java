@@ -58,10 +58,12 @@ public class PedidoServico {
         ResponseBuilder resposta;
         try {
             pedidoNegocio.inserir(pedidoDTO);
-            PedidoDTO pedidoDTOTemp = pedidoNegocio.pesquisaCodigo(pedidoDTO.getCodigo());
-            pedidoDTOTemp.setLink("/pedido/codigo/" + pedidoDTOTemp.getCodigo());
+
+            //Não há nenhuma maneira de obter o pedidoDTO após a inserção
+            // PedidoDTO pedidoDTOTemp = pedidoNegocio.pesquisaCodigo(pedidoDTO.getCodigo());
+            // pedidoDTOTemp.setLink("/pedido/" + pedidoDTOTemp.getCodigo());
             resposta = Response.ok();
-            resposta.entity(pedidoDTOTemp);
+            // resposta.entity(pedidoDTOTemp);
         } catch (Exception ex) {
             resposta = Response.status(400);
             resposta.entity(new Mensagem(ex.getMessage()));
@@ -77,7 +79,7 @@ public class PedidoServico {
         try {
             pedidoNegocio.alterar(pedidoDTO);
             PedidoDTO pedidoDTOTemp = pedidoNegocio.pesquisaCodigo(pedidoDTO.getCodigo());
-            pedidoDTOTemp.setLink("/pedido/codigo/" + pedidoDTOTemp.getCodigo());
+            pedidoDTOTemp.setLink("/pedido/" + pedidoDTOTemp.getCodigo());
             resposta = Response.ok();
             resposta.entity(pedidoDTOTemp);
         } catch (Exception ex) {
@@ -102,18 +104,15 @@ public class PedidoServico {
         return resposta.build();
     }
 
-
-    //não sei se está certo
-    @PUT
-    @Path("/producao")
-    @Consumes(MediaType.APPLICATION_JSON)
+    @GET
+    @Path("/{codigo}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response mudarPedidoParaProducao(PedidoDTO pedidoDTO) {
+    public Response buscarPorCodigo(@PathParam("codigo") int codigo) {
         ResponseBuilder resposta;
         try {
-            pedidoNegocio.mudarPedidoParaProducao(pedidoDTO);
-            PedidoDTO pedidoDTOTemp = pedidoNegocio.pesquisaCodigo(pedidoDTO.getCodigo());
-            pedidoDTOTemp.setLink("/pedido/codigo/" + pedidoDTOTemp.getCodigo());
+            pedidoNegocio.pesquisaCodigo(codigo);
+            PedidoDTO pedidoDTOTemp = pedidoNegocio.pesquisaCodigo(codigo);
+            pedidoDTOTemp.setLink("/pedido/" + pedidoDTOTemp.getCodigo());
             resposta = Response.ok();
             resposta.entity(pedidoDTOTemp);
         } catch (Exception ex) {
@@ -123,8 +122,25 @@ public class PedidoServico {
         return resposta.build();
     }
 
+    @PUT
+    @Path("/producao")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response mudarPedidoParaProducao(PedidoDTO pedidoDTO) {
+        ResponseBuilder resposta;
+        try {
+            pedidoNegocio.mudarPedidoParaProducao(pedidoDTO);
+            PedidoDTO pedidoDTOTemp = pedidoNegocio.pesquisaCodigo(pedidoDTO.getCodigo());
+            pedidoDTOTemp.setLink("/pedido/" + pedidoDTOTemp.getCodigo());
+            resposta = Response.ok();
+            resposta.entity(pedidoDTOTemp);
+        } catch (Exception ex) {
+            resposta = Response.status(400);
+            resposta.entity(new Mensagem(ex.getMessage()));
+        }
+        return resposta.build();
+    }
 
-    //não sei se está certo
     @PUT
     @Path("/pronto")
     @Consumes(MediaType.APPLICATION_JSON)
@@ -134,7 +150,7 @@ public class PedidoServico {
         try {
             pedidoNegocio.mudarPedidoParaPronto(pedidoDTO);
             PedidoDTO pedidoDTOTemp = pedidoNegocio.pesquisaCodigo(pedidoDTO.getCodigo());
-            pedidoDTOTemp.setLink("/pedido/codigo/" + pedidoDTOTemp.getCodigo());
+            pedidoDTOTemp.setLink("/pedido/" + pedidoDTOTemp.getCodigo());
             resposta = Response.ok();
             resposta.entity(pedidoNegocio.pesquisaCodigo(pedidoDTO.getCodigo()));
         } catch (Exception ex) {
@@ -144,7 +160,6 @@ public class PedidoServico {
         return resposta.build();
     }
 
-    //não sei se está certo
     @PUT
     @Path("/entrega")
     @Consumes(MediaType.APPLICATION_JSON)
@@ -154,7 +169,7 @@ public class PedidoServico {
         try {
             pedidoNegocio.mudarPedidoParaEntrega(pedidoDTO);
             PedidoDTO pedidoDTOTemp = pedidoNegocio.pesquisaCodigo(pedidoDTO.getCodigo());
-            pedidoDTOTemp.setLink("/pedido/codigo/" + pedidoDTOTemp.getCodigo());
+            pedidoDTOTemp.setLink("/pedido/" + pedidoDTOTemp.getCodigo());
             resposta = Response.ok();
             resposta.entity(pedidoDTOTemp);
         } catch (Exception ex) {
@@ -173,25 +188,7 @@ public class PedidoServico {
         try {
             pedidoNegocio.mudarPedidoParaConcluido(pedidoDTO);
             PedidoDTO pedidoDTOTemp = pedidoNegocio.pesquisaCodigo(pedidoDTO.getCodigo());
-            pedidoDTOTemp.setLink("/pedido/codigo/" + pedidoDTOTemp.getCodigo());
-            resposta = Response.ok();
-            resposta.entity(pedidoDTOTemp);
-        } catch (Exception ex) {
-            resposta = Response.status(400);
-            resposta.entity(new Mensagem(ex.getMessage()));
-        }
-        return resposta.build();
-    }
-
-    @GET
-    @Path("/codigo/{codigo}")
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response buscarPorCodigo(@PathParam("codigo") int codigo) {
-        ResponseBuilder resposta;
-        try {
-            pedidoNegocio.pesquisaCodigo(codigo);
-            PedidoDTO pedidoDTOTemp = pedidoNegocio.pesquisaCodigo(codigo);
-            pedidoDTOTemp.setLink("/pedido/codigo/" + pedidoDTOTemp.getCodigo());
+            pedidoDTOTemp.setLink("/pedido/" + pedidoDTOTemp.getCodigo());
             resposta = Response.ok();
             resposta.entity(pedidoDTOTemp);
         } catch (Exception ex) {
@@ -210,7 +207,7 @@ public class PedidoServico {
             DateTimeFormatter formato = DateTimeFormatter.ofPattern("dd/MM/yyyy");
             List<PedidoDTO> listaPedidoDTO = pedidoNegocio.pesquisaPorDataProducao(LocalDate.parse(dataInicial, formato), LocalDate.parse(dataFinal, formato));
             for (PedidoDTO pedidoDTO : listaPedidoDTO) {
-                pedidoDTO.setLink("/pedido/codigo/" + pedidoDTO.getCodigo());
+                pedidoDTO.setLink("/pedido/" + pedidoDTO.getCodigo());
             }
             resposta = Response.ok();
             resposta.entity(listaPedidoDTO);
@@ -229,7 +226,7 @@ public class PedidoServico {
         try {
             List<PedidoDTO> listaPedidoDTO = pedidoNegocio.pesquisaPorEstado(EstadoPedidoDTO.valueOf(estado));
             for (PedidoDTO pedidoDTO : listaPedidoDTO) {
-                pedidoDTO.setLink("/pedido/codigo/" + pedidoDTO.getCodigo());
+                pedidoDTO.setLink("/pedido/" + pedidoDTO.getCodigo());
             }
             resposta = Response.ok();
             resposta.entity(listaPedidoDTO);
@@ -249,7 +246,7 @@ public class PedidoServico {
             DateTimeFormatter formato = DateTimeFormatter.ofPattern("dd/MM/yyyy");
             List<PedidoDTO> listaPedidoDTO = pedidoNegocio.pesquisaPorEstadoEData(EstadoPedidoDTO.valueOf(estado), LocalDate.parse(data, formato));
             for (PedidoDTO pedidoDTO : listaPedidoDTO) {
-                pedidoDTO.setLink("/pedido/codigo/" + pedidoDTO.getCodigo());
+                pedidoDTO.setLink("/pedido/" + pedidoDTO.getCodigo());
             }
             resposta = Response.ok();
             resposta.entity(listaPedidoDTO);
@@ -369,17 +366,5 @@ public class PedidoServico {
         }
         return resposta.build();
     }
-
-    // tempo médio entre o término da produção de uma refeição e a finalização da entrega ao cliente
-//    @GET
-//    @Path("/tempo")
-//    @Produces(MediaType.APPLICATION_JSON)
-//    public Response tempoMedioEntrega() {
-//        ResponseBuilder resposta;
-//        try {
-//            List<PedidoDTO> listaPedidoDTO = pedidoNegocio.toDTOAll();
-//
-//
-//    }
 
 }
