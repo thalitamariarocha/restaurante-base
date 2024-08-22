@@ -38,7 +38,7 @@ public class OrdemProducaoNegocio {
 		}
 	}
 
-	public void inserir(OrdemProducaoDTO ordemProducaoDTO) throws NegocioException {
+	public int inserir(OrdemProducaoDTO ordemProducaoDTO) throws NegocioException {
 
 		OrdemProducao ordemProducao = this.toEntity(ordemProducaoDTO);
 		String mensagemErros = ordemProducao.validar();
@@ -49,8 +49,10 @@ public class OrdemProducaoNegocio {
 
 		try {
 			ordemProducaoDAO.beginTransaction();
-			ordemProducaoDAO.incluir(ordemProducao);
+			int idGerado = (int)ordemProducaoDAO.incluir(ordemProducao);
 			ordemProducaoDAO.commitTransaction();
+
+			return idGerado;
 		} catch (PersistenciaException ex) {
 			ordemProducaoDAO.rollbackTransaction();
 			throw new NegocioException("Erro ao incluir ordem de producao - " + ex.getMessage());

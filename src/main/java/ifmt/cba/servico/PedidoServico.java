@@ -9,7 +9,6 @@ import java.util.List;
 import ifmt.cba.dto.ClienteDTO;
 import ifmt.cba.dto.EstadoPedidoDTO;
 import ifmt.cba.dto.PedidoDTO;
-import ifmt.cba.dto.ProdutoDTO;
 import ifmt.cba.negocio.ClienteNegocio;
 import ifmt.cba.negocio.NegocioException;
 import ifmt.cba.negocio.PedidoNegocio;

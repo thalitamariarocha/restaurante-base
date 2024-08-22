@@ -19,8 +19,9 @@ import ifmt.cba.persistencia.FabricaEntityManager;
 import ifmt.cba.servico.util.Mensagem;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.*;
+import jakarta.ws.rs.core.Response.ResponseBuilder;
 
-@Path("/ordemProducao")
+@Path("/ordem-producao")
 public class OrdemProducaoServico {
     private static OrdemProducaoDAO ordemProducaoDAO;
     private static ItemOrdemProducaoDAO itemOrdemProducaoDAO;
@@ -38,7 +39,26 @@ public class OrdemProducaoServico {
         }
     }
 
-    // implementar processarOrdemProducao
+    @POST
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response adicionar(OrdemProducaoDTO ordemProducaoDTO) {
+        ResponseBuilder resposta;
+        try {
+            int idGErado = ordemProducaoNegocio.inserir(ordemProducaoDTO);
+            
+            OrdemProducaoDTO ordemProducaoTemp = ordemProducaoNegocio.pesquisaCodigo(idGErado);
+            ordemProducaoTemp.setLink("/ordem-producao/" + ordemProducaoTemp.getCodigo());
+            resposta = Response.ok();
+            resposta.entity(ordemProducaoTemp);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            resposta = Response.status(400);
+            resposta.entity(new Mensagem(ex.getMessage()));
+        }
+        return resposta.build();
+    }
+
     @PUT
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
