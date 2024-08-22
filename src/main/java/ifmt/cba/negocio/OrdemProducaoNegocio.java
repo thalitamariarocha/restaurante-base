@@ -195,7 +195,7 @@ public class OrdemProducaoNegocio {
 		ordemProducaoDAO.beginTransaction();
 		Iterator<ItemOrdemProducao> itensOrdem = ordemProducao.getListaItens().iterator();
 		while (itensOrdem.hasNext() && processouItens) {
-			ItemOrdemProducao itemOrdem = (ItemOrdemProducao) itensOrdem.next();
+			ItemOrdemProducao itemOrdem = itensOrdem.next();
 			produto = produtoNegocio.pesquisaCodigo(itemOrdem.getPreparoProduto().getProduto().getCodigo());
 			if (produto.getEstoque() >= itemOrdem.getQuantidadePorcao()) {
 				produto.setEstoque(produto.getEstoque() - itemOrdem.getQuantidadePorcao());
@@ -206,7 +206,13 @@ public class OrdemProducaoNegocio {
 		}
 		if (processouItens) {
 			ordemProducaoDTO.setEstado(EstadoOrdemProducaoDTO.PROCESSADA);
-			this.alterar(ordemProducaoDTO);
+			ordemProducaoDTO.setDataProducao(LocalDate.now());
+			try {
+				ordemProducaoDAO.alterar(this.toEntity(ordemProducaoDTO));
+			} catch (PersistenciaException e) {
+				ordemProducaoDAO.rollbackTransaction();
+				throw new NegocioException("Não foi possível mudar a situação para processada");
+			}
 			ordemProducaoDAO.commitTransaction();
 		} else {
 			ordemProducaoDAO.rollbackTransaction();
