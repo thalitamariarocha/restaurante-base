@@ -126,6 +126,19 @@ public class PedidoNegocio {
 		}
 	}
 
+	public ItemPedidoDTO pesquisaItemPedidoCodigo(int codigo) throws NegocioException {
+		try {
+			ItemPedido itemPedido = itemPedidoDAO.buscarPorCodigo(codigo);
+			if (itemPedido != null) {
+				return this.toItemPeditoDTO(itemPedido);
+			} else {
+				return null;
+			}
+		} catch (PersistenciaException ex) {
+			throw new NegocioException("Erro ao pesquisar item de pedido pelo codigo - " + ex.getMessage());
+		}
+	}
+
 	public PedidoDTO pesquisaCodigo(int codigo) throws NegocioException {
 		try {
 			Pedido pedido = pedidoDAO.buscarPorCodigo(codigo);
@@ -176,8 +189,6 @@ public class PedidoNegocio {
 			throw new NegocioException("Erro ao pesquisar pedido pelo cliente - " + ex.getMessage());
 		}
 	}
-
-
 
 	public void mudarPedidoParaProducao(PedidoDTO pedidoDTO) throws NegocioException {
 

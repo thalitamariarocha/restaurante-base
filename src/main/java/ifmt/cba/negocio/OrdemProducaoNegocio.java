@@ -137,6 +137,19 @@ public class OrdemProducaoNegocio {
 		}
 	}
 
+	public ItemOrdemProducaoDTO pesquisarItemOrdemProducaoPorCodigo(int codigo) throws NegocioException {
+		try {
+			ItemOrdemProducao itemOrdemProducao = itemOrdemProducaoDAO.buscarPorCodigo(codigo);
+			if (itemOrdemProducao != null) {
+				return this.toItemOrdemProducaoDTO(itemOrdemProducao);
+			} else {
+				return null;
+			}
+		} catch (PersistenciaException ex) {
+			throw new NegocioException("Erro ao pesquisar item de ordem de producao pelo codigo - " + ex.getMessage());
+		}
+	}
+
 	public OrdemProducaoDTO pesquisaCodigo(int codigo) throws NegocioException {
 		try {
 			OrdemProducao ordemProducaoDTO = ordemProducaoDAO.buscarPorCodigo(codigo);
