@@ -13,7 +13,6 @@ import ifmt.cba.dto.OrdemProducaoDTO;
 import ifmt.cba.dto.ProdutoDTO;
 import ifmt.cba.entity.ItemOrdemProducao;
 import ifmt.cba.entity.OrdemProducao;
-import ifmt.cba.entity.Pedido;
 import ifmt.cba.persistencia.FabricaEntityManager;
 import ifmt.cba.persistencia.ItemOrdemProducaoDAO;
 import ifmt.cba.persistencia.OrdemProducaoDAO;
