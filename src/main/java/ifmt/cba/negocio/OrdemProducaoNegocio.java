@@ -13,6 +13,7 @@ import ifmt.cba.dto.OrdemProducaoDTO;
 import ifmt.cba.dto.ProdutoDTO;
 import ifmt.cba.entity.ItemOrdemProducao;
 import ifmt.cba.entity.OrdemProducao;
+import ifmt.cba.entity.Pedido;
 import ifmt.cba.persistencia.FabricaEntityManager;
 import ifmt.cba.persistencia.ItemOrdemProducaoDAO;
 import ifmt.cba.persistencia.OrdemProducaoDAO;
@@ -139,7 +140,12 @@ public class OrdemProducaoNegocio {
 
 	public OrdemProducaoDTO pesquisaCodigo(int codigo) throws NegocioException {
 		try {
-			return this.toDTO(ordemProducaoDAO.buscarPorCodigo(codigo));
+			OrdemProducao ordemProducaoDTO = ordemProducaoDAO.buscarPorCodigo(codigo);
+			if (ordemProducaoDTO != null) {
+				return this.toDTO(ordemProducaoDTO);
+			} else {
+				return null;
+			}
 		} catch (PersistenciaException ex) {
 			throw new NegocioException("Erro ao pesquisar ordem de producao pelo codigo - " + ex.getMessage());
 		}

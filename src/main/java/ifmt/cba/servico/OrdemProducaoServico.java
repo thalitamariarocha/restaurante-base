@@ -62,6 +62,58 @@ public class OrdemProducaoServico {
     @PUT
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
+    public Response alterar(OrdemProducaoDTO ordemProducaoDTO) {
+        ResponseBuilder resposta;
+        try {
+            ordemProducaoNegocio.alterar(ordemProducaoDTO);
+            OrdemProducaoDTO ordemProducaoTemp = ordemProducaoNegocio.pesquisaCodigo(ordemProducaoDTO.getCodigo());
+            ordemProducaoTemp.setLink("/ordem-producao/" + ordemProducaoTemp.getCodigo());
+            resposta = Response.ok();
+            resposta.entity(ordemProducaoTemp);
+        } catch (Exception ex) {
+            resposta = Response.status(400);
+            resposta.entity(new Mensagem(ex.getMessage()));
+        }
+        return resposta.build();
+    }
+
+    @DELETE
+    @Path("/{codigo}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response excluir(@PathParam("codigo") int codigo) {
+        ResponseBuilder resposta;
+        try {
+            OrdemProducaoDTO ordemProducaoDTO = new OrdemProducaoDTO();
+            ordemProducaoDTO.setCodigo(codigo);
+            ordemProducaoNegocio.excluir(ordemProducaoDTO);
+            resposta = Response.noContent();
+        } catch (Exception ex) {
+            resposta = Response.status(400);
+            resposta.entity(new Mensagem(ex.getMessage()));
+        }
+        return resposta.build();
+    }
+
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    @Path("/{codigo}")
+    public Response pesquisarPorCodigo(@PathParam("codigo") int codigo) {
+        ResponseBuilder resposta;
+        try {
+            OrdemProducaoDTO ordemProducaoDTO = ordemProducaoNegocio.pesquisaCodigo(codigo);
+            ordemProducaoDTO.setLink("/ordem-producao/" + ordemProducaoDTO.getCodigo());
+            resposta = Response.ok();
+            resposta.entity(ordemProducaoDTO);
+        } catch (Exception ex) {
+            resposta = Response.status(400);
+            resposta.entity(new Mensagem(ex.getMessage()));
+        }
+        return resposta.build();
+    }
+
+    @PUT
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
     @Path("/processarOrdemProducao")
     public Response processarOrdemProducao(OrdemProducaoDTO ordemProducaoDTO) {
         Response.ResponseBuilder resposta;

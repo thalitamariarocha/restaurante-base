@@ -111,7 +111,6 @@ public class PedidoServico {
     public Response buscarPorCodigo(@PathParam("codigo") int codigo) {
         ResponseBuilder resposta;
         try {
-            pedidoNegocio.pesquisaCodigo(codigo);
             PedidoDTO pedidoDTOTemp = pedidoNegocio.pesquisaCodigo(codigo);
             pedidoDTOTemp.setLink("/pedido/" + pedidoDTOTemp.getCodigo());
             resposta = Response.ok();
