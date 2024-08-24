@@ -2,7 +2,6 @@ package ifmt.cba.servico;
 
 import ifmt.cba.dto.ItemPedidoDTO;
 import ifmt.cba.dto.PedidoDTO;
-import ifmt.cba.negocio.ClienteNegocio;
 import ifmt.cba.negocio.PedidoNegocio;
 import ifmt.cba.persistencia.ClienteDAO;
 import ifmt.cba.persistencia.FabricaEntityManager;
@@ -26,7 +25,6 @@ import jakarta.ws.rs.core.Response.ResponseBuilder;
 public class PedidoServico {
 
     private static PedidoNegocio pedidoNegocio;
-    private static ClienteNegocio clienteNegocio;
     private static PedidoDAO pedidoDAO;
     private static ClienteDAO clienteDAO;
 
@@ -36,7 +34,6 @@ public class PedidoServico {
             ItemPedidoDAO itemPedidoDAO = new ItemPedidoDAO(FabricaEntityManager.getEntityManagerProducao());
             clienteDAO = new ClienteDAO(FabricaEntityManager.getEntityManagerProducao());
             pedidoNegocio = new PedidoNegocio(pedidoDAO, itemPedidoDAO, clienteDAO);
-            clienteNegocio = new ClienteNegocio(clienteDAO, pedidoDAO);
         } catch (PersistenciaException e) {
             e.printStackTrace();
         }
