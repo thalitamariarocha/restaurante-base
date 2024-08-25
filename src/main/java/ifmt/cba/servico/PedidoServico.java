@@ -1,7 +1,15 @@
 package ifmt.cba.servico;
 
+import java.time.Duration;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
+import java.util.List;
+
+import ifmt.cba.dto.EstadoPedidoDTO;
 import ifmt.cba.dto.ItemPedidoDTO;
 import ifmt.cba.dto.PedidoDTO;
+import ifmt.cba.negocio.NegocioException;
 import ifmt.cba.negocio.PedidoNegocio;
 import ifmt.cba.persistencia.ClienteDAO;
 import ifmt.cba.persistencia.FabricaEntityManager;
@@ -17,6 +25,7 @@ import jakarta.ws.rs.PUT;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.QueryParam;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.Response.ResponseBuilder;
@@ -146,80 +155,170 @@ public class PedidoServico {
         return resposta.build();
     }
 
-    // @Path("/producao")
-    // @Consumes(MediaType.APPLICATION_JSON)
-    // @Produces(MediaType.APPLICATION_JSON)
-    // public Response mudarPedidoParaProducao(PedidoDTO pedidoDTO) {
-    //     ResponseBuilder resposta;
-    //     try {
-    //         pedidoNegocio.mudarPedidoParaProducao(pedidoDTO);
-    //         PedidoDTO pedidoDTOTemp = pedidoNegocio.pesquisaCodigo(pedidoDTO.getCodigo());
-    //         pedidoDTOTemp.setLink("/pedido/" + pedidoDTOTemp.getCodigo());
-    //         resposta = Response.ok();
-    //         resposta.entity(pedidoDTOTemp);
-    //     } catch (Exception ex) {
-    //         resposta = Response.status(400);
-    //         resposta.entity(new Mensagem(ex.getMessage()));
-    //     }
-    //     return resposta.build();
-    // }
+    @PUT
+    @Path("/{codigo}/alterar-estado/{estado}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response alterarEstado(@PathParam("codigo") int codigo, @PathParam("estado") String estado) {
+        ResponseBuilder resposta;
+        try {
+            PedidoDTO pedido = pedidoNegocio.pesquisaCodigo(codigo);
+            switch (estado) {
+                case "producao":
+                    pedidoNegocio.mudarPedidoParaProducao(pedido);
+                    break;
+                case "pronto":
+                    pedidoNegocio.mudarPedidoParaPronto(pedido);
+                    break;
+                case "entrega":
+                    pedidoNegocio.mudarPedidoParaEntrega(pedido);
+                    break;
+                case "concluido":
+                    pedidoNegocio.mudarPedidoParaConcluido(pedido);
+                    break;
+                default:
+                    throw new Exception("Estado invalido!");
+            }
+            PedidoDTO pedidoDTOTemp = pedidoNegocio.pesquisaCodigo(codigo);
+            pedidoDTOTemp.setLink("/pedido/" + pedidoDTOTemp.getCodigo());
+            resposta = Response.ok();
+            resposta.entity(pedidoDTOTemp);
+        } catch (Exception ex) {
+            resposta = Response.status(400);
+            resposta.entity(new Mensagem(ex.getMessage()));
+        }
+        return resposta.build();
+    }
 
-    // @PUT
-    // @Path("/pronto")
-    // @Consumes(MediaType.APPLICATION_JSON)
-    // @Produces(MediaType.APPLICATION_JSON)
-    // public Response mudarPedidoParaPronto(PedidoDTO pedidoDTO) {
-    //     ResponseBuilder resposta;
-    //     try {
-    //         pedidoNegocio.mudarPedidoParaPronto(pedidoDTO);
-    //         PedidoDTO pedidoDTOTemp = pedidoNegocio.pesquisaCodigo(pedidoDTO.getCodigo());
-    //         pedidoDTOTemp.setLink("/pedido/" + pedidoDTOTemp.getCodigo());
-    //         resposta = Response.ok();
-    //         resposta.entity(pedidoNegocio.pesquisaCodigo(pedidoDTO.getCodigo()));
-    //     } catch (Exception ex) {
-    //         resposta = Response.status(400);
-    //         resposta.entity(new Mensagem(ex.getMessage()));
-    //     }
-    //     return resposta.build();
-    // }
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response pesquisaPorEstadoEData(@QueryParam("data") String data, @QueryParam("estado") String estado) {
+        ResponseBuilder resposta;
+        try {
+            DateTimeFormatter formato = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+            LocalDate dataFormatada = LocalDate.parse(data, formato);
 
-    // @PUT
-    // @Path("/entrega")
-    // @Consumes(MediaType.APPLICATION_JSON)
-    // @Produces(MediaType.APPLICATION_JSON)
-    // public Response mudarPedidoParaEntrega(PedidoDTO pedidoDTO) {
-    //     ResponseBuilder resposta;
-    //     try {
-    //         pedidoNegocio.mudarPedidoParaEntrega(pedidoDTO);
-    //         PedidoDTO pedidoDTOTemp = pedidoNegocio.pesquisaCodigo(pedidoDTO.getCodigo());
-    //         pedidoDTOTemp.setLink("/pedido/" + pedidoDTOTemp.getCodigo());
-    //         resposta = Response.ok();
-    //         resposta.entity(pedidoDTOTemp);
-    //     } catch (Exception ex) {
-    //         resposta = Response.status(400);
-    //         resposta.entity(new Mensagem(ex.getMessage()));
-    //     }
-    //     return resposta.build();
-    // }
+            List<PedidoDTO> listaPedidoDTO = pedidoNegocio.pesquisaPorEstadoEData(EstadoPedidoDTO.valueOf(estado.toUpperCase()),
+                    dataFormatada);
+            for (PedidoDTO pedidoDTO : listaPedidoDTO) {
+                pedidoDTO.setLink("/pedido/" + pedidoDTO.getCodigo());
+            }
+            resposta = Response.ok();
+            resposta.entity(listaPedidoDTO);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            resposta = Response.status(400);
+            resposta.entity(new Mensagem(ex.getMessage()));
+        }
+        return resposta.build();
+    }
 
-    // @PUT
-    // @Path("/concluido")
-    // @Consumes(MediaType.APPLICATION_JSON)
-    // @Produces(MediaType.APPLICATION_JSON)
-    // public Response mudarPedidoParaConcluido(PedidoDTO pedidoDTO) {
-    //     ResponseBuilder resposta;
-    //     try {
-    //         pedidoNegocio.mudarPedidoParaConcluido(pedidoDTO);
-    //         PedidoDTO pedidoDTOTemp = pedidoNegocio.pesquisaCodigo(pedidoDTO.getCodigo());
-    //         pedidoDTOTemp.setLink("/pedido/" + pedidoDTOTemp.getCodigo());
-    //         resposta = Response.ok();
-    //         resposta.entity(pedidoDTOTemp);
-    //     } catch (Exception ex) {
-    //         resposta = Response.status(400);
-    //         resposta.entity(new Mensagem(ex.getMessage()));
-    //     }
-    //     return resposta.build();
-    // }
+    @GET
+    @Path("/relatorio/totalizacao-pedido-produzidos-periodo")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response relatorioPedidoPeriodo(@QueryParam("dataInicial") String dataInicialStr,
+            @QueryParam("dataFinal") String dataFinalStr) {
+        ResponseBuilder resposta;
+        try {
+
+            LocalDate dataInicial = LocalDate.parse(dataInicialStr);
+            LocalDate dataFinal = LocalDate.parse(dataFinalStr);
+
+            List<PedidoDTO> listaPedidoDTO = pedidoNegocio.pesquisaPorDataProducao(dataInicial, dataFinal);
+            double totalizacao = listaPedidoDTO.size();
+
+            resposta = Response.ok();
+            resposta.entity(totalizacao);
+        } catch (NegocioException ex) {
+            resposta = Response.status(400);
+            resposta.entity(new Mensagem(ex.getMessage()));
+        } catch (DateTimeParseException ex) {
+            resposta = Response.status(400);
+            resposta.entity(new Mensagem("Formato de data inválido: " + ex.getParsedString()));
+        } catch (Exception ex) {
+            resposta = Response.status(500);
+            resposta.entity(new Mensagem("Erro inesperado: " + ex.getMessage()));
+        }
+        return resposta.build();
+    }
+
+    @GET
+    @Path("/relatorio/media-tempo-pronto-concluido")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response calcularMediaTempoEntreProntoECOncluido() {
+        ResponseBuilder resposta;
+        try {
+            List<PedidoDTO> listaPedidoDTO = pedidoNegocio.pesquisaPorEstado(EstadoPedidoDTO.CONCLUIDO);
+
+            double mediaTempo = listaPedidoDTO.stream()
+                    .filter(pedido -> pedido.getHoraPronto() != null && pedido.getHoraFinalizado() != null)
+                    .mapToLong(
+                            pedido -> Duration.between(pedido.getHoraPronto(), pedido.getHoraFinalizado()).toMinutes())
+                    .average()
+                    .orElse(0);
+
+            resposta = Response.ok();
+            resposta.entity(mediaTempo);
+        } catch (NegocioException ex) {
+
+            resposta = Response.status(400);
+            resposta.entity(new Mensagem(ex.getMessage()));
+        } catch (Exception ex) {
+
+            resposta = Response.status(500);
+            resposta.entity(new Mensagem("Erro inesperado: " + ex.getMessage()));
+        }
+        return resposta.build();
+    }
+
+    @GET
+    @Path("/relatorio/media-tempo-registrado-pronto")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response calcularMediaTempoRegistradoEPronto() {
+        ResponseBuilder resposta;
+        try {
+            List<PedidoDTO> listaPedidoDTO = pedidoNegocio.pesquisaPorEstado(EstadoPedidoDTO.PRONTO);
+            listaPedidoDTO.addAll(pedidoNegocio.pesquisaPorEstado(EstadoPedidoDTO.ENTREGA));
+            listaPedidoDTO.addAll(pedidoNegocio.pesquisaPorEstado(EstadoPedidoDTO.CONCLUIDO));
+
+            double mediaTempo = listaPedidoDTO.stream()
+                    .filter(pedido -> pedido.getHoraPedido() != null && pedido.getHoraPronto() != null)
+                    .mapToLong(pedido -> Duration.between(pedido.getHoraPedido(), pedido.getHoraPronto()).toMinutes())
+                    .average()
+                    .orElse(0);
+
+            resposta = Response.ok();
+            resposta.entity(mediaTempo);
+        } catch (NegocioException ex) {
+
+            resposta = Response.status(400);
+            resposta.entity(new Mensagem(ex.getMessage()));
+        } catch (Exception ex) {
+
+            resposta = Response.status(500);
+            resposta.entity(new Mensagem("Erro inesperado: " + ex.getMessage()));
+        }
+        return resposta.build();
+    }
+
+    @GET
+    @Path("/buscar-por-estado/{estado}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response buscarPorEstado(@PathParam("estado") String estado) {
+        ResponseBuilder resposta;
+        try {
+            List<PedidoDTO> listaPedidoDTO = pedidoNegocio.pesquisaPorEstado(EstadoPedidoDTO.valueOf(estado.toUpperCase()));
+            for (PedidoDTO pedidoDTO : listaPedidoDTO) {
+                pedidoDTO.setLink("/pedido/" + pedidoDTO.getCodigo());
+            }
+            resposta = Response.ok();
+            resposta.entity(listaPedidoDTO);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            resposta = Response.status(400);
+            resposta.entity(new Mensagem(ex.getMessage()));
+        }
+        return resposta.build();
+    }
 
     // @GET
     // @Path("/dataproducao")
@@ -231,46 +330,6 @@ public class PedidoServico {
     //         DateTimeFormatter formato = DateTimeFormatter.ofPattern("dd/MM/yyyy");
     //         List<PedidoDTO> listaPedidoDTO = pedidoNegocio.pesquisaPorDataProducao(
     //                 LocalDate.parse(dataInicial, formato), LocalDate.parse(dataFinal, formato));
-    //         for (PedidoDTO pedidoDTO : listaPedidoDTO) {
-    //             pedidoDTO.setLink("/pedido/" + pedidoDTO.getCodigo());
-    //         }
-    //         resposta = Response.ok();
-    //         resposta.entity(listaPedidoDTO);
-    //     } catch (Exception ex) {
-    //         resposta = Response.status(400);
-    //         resposta.entity(new Mensagem(ex.getMessage()));
-    //     }
-    //     return resposta.build();
-    // }
-
-    // @GET
-    // @Path("/estado")
-    // @Produces(MediaType.APPLICATION_JSON)
-    // public Response buscarPorEstado(@QueryParam("estado") String estado) {
-    //     ResponseBuilder resposta;
-    //     try {
-    //         List<PedidoDTO> listaPedidoDTO = pedidoNegocio.pesquisaPorEstado(EstadoPedidoDTO.valueOf(estado));
-    //         for (PedidoDTO pedidoDTO : listaPedidoDTO) {
-    //             pedidoDTO.setLink("/pedido/" + pedidoDTO.getCodigo());
-    //         }
-    //         resposta = Response.ok();
-    //         resposta.entity(listaPedidoDTO);
-    //     } catch (Exception ex) {
-    //         resposta = Response.status(400);
-    //         resposta.entity(new Mensagem(ex.getMessage()));
-    //     }
-    //     return resposta.build();
-    // }
-
-    // @GET
-    // @Path("/estadodata")
-    // @Produces(MediaType.APPLICATION_JSON)
-    // public Response pesquisaPorEstadoEData(@QueryParam("estado") String estado, @QueryParam("data") String data) {
-    //     ResponseBuilder resposta;
-    //     try {
-    //         DateTimeFormatter formato = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-    //         List<PedidoDTO> listaPedidoDTO = pedidoNegocio.pesquisaPorEstadoEData(EstadoPedidoDTO.valueOf(estado),
-    //                 LocalDate.parse(data, formato));
     //         for (PedidoDTO pedidoDTO : listaPedidoDTO) {
     //             pedidoDTO.setLink("/pedido/" + pedidoDTO.getCodigo());
     //         }
@@ -299,98 +358,6 @@ public class PedidoServico {
     //     } catch (Exception ex) {
     //         resposta = Response.status(400);
     //         resposta.entity(new Mensagem(ex.getMessage()));
-    //     }
-    //     return resposta.build();
-    // }
-
-    // // consultar a produção de refeições por dia com totalização mensal
-    // @GET
-    // @Path("/relatorioPedidoPeriodo")
-    // @Produces(MediaType.APPLICATION_JSON)
-    // public Response relatorioPedidoPeriodo(@QueryParam("dataInicial") String dataInicialStr,
-    //         @QueryParam("dataFinal") String dataFinalStr) {
-    //     ResponseBuilder resposta;
-    //     try {
-
-    //         LocalDate dataInicial = LocalDate.parse(dataInicialStr);
-    //         LocalDate dataFinal = LocalDate.parse(dataFinalStr);
-
-    //         List<PedidoDTO> listaPedidoDTO = pedidoNegocio.pesquisaPorDataProducao(dataInicial, dataFinal);
-    //         double totalizacao = listaPedidoDTO.size();
-
-    //         resposta = Response.ok();
-    //         resposta.entity(totalizacao);
-    //     } catch (NegocioException ex) {
-    //         // Tratar exceção de negócio
-    //         resposta = Response.status(400);
-    //         resposta.entity(new Mensagem(ex.getMessage()));
-    //     } catch (DateTimeParseException ex) {
-    //         // Tratar exceção de parsing de data
-    //         resposta = Response.status(400);
-    //         resposta.entity(new Mensagem("Formato de data inválido: " + ex.getParsedString()));
-    //     } catch (Exception ex) {
-    //         // Tratar outras exceções
-    //         resposta = Response.status(500);
-    //         resposta.entity(new Mensagem("Erro inesperado: " + ex.getMessage()));
-    //     }
-    //     return resposta.build();
-    // }
-
-    // @GET
-    // @Path("/media-tempo-pronto-concluido")
-    // @Produces(MediaType.APPLICATION_JSON)
-    // public Response calcularMediaTempoEntreProntoECOncluido() {
-    //     ResponseBuilder resposta;
-    //     try {
-    //         List<PedidoDTO> listaPedidoDTO = pedidoNegocio.pesquisaPorEstado(EstadoPedidoDTO.CONCLUIDO);
-
-    //         double mediaTempo = listaPedidoDTO.stream()
-    //                 .filter(pedido -> pedido.getHoraPronto() != null && pedido.getHoraFinalizado() != null)
-    //                 .mapToLong(
-    //                         pedido -> Duration.between(pedido.getHoraPronto(), pedido.getHoraFinalizado()).toMinutes())
-    //                 .average()
-    //                 .orElse(0);
-
-    //         resposta = Response.ok();
-    //         resposta.entity(mediaTempo);
-    //     } catch (NegocioException ex) {
-
-    //         resposta = Response.status(400);
-    //         resposta.entity(new Mensagem(ex.getMessage()));
-    //     } catch (Exception ex) {
-
-    //         resposta = Response.status(500);
-    //         resposta.entity(new Mensagem("Erro inesperado: " + ex.getMessage()));
-    //     }
-    //     return resposta.build();
-    // }
-
-    // @GET
-    // @Path("/media-tempo-registrado-pronto")
-    // @Produces(MediaType.APPLICATION_JSON)
-    // public Response calcularMediaTempoRegistradoEPronto() {
-    //     ResponseBuilder resposta;
-    //     try {
-    //         List<PedidoDTO> listaPedidoDTO = pedidoNegocio.pesquisaPorEstado(EstadoPedidoDTO.PRONTO);
-    //         listaPedidoDTO.addAll(pedidoNegocio.pesquisaPorEstado(EstadoPedidoDTO.ENTREGA));
-    //         listaPedidoDTO.addAll(pedidoNegocio.pesquisaPorEstado(EstadoPedidoDTO.CONCLUIDO));
-
-    //         double mediaTempo = listaPedidoDTO.stream()
-    //                 .filter(pedido -> pedido.getHoraPedido() != null && pedido.getHoraPronto() != null)
-    //                 .mapToLong(pedido -> Duration.between(pedido.getHoraPedido(), pedido.getHoraPronto()).toMinutes())
-    //                 .average()
-    //                 .orElse(0);
-
-    //         resposta = Response.ok();
-    //         resposta.entity(mediaTempo);
-    //     } catch (NegocioException ex) {
-
-    //         resposta = Response.status(400);
-    //         resposta.entity(new Mensagem(ex.getMessage()));
-    //     } catch (Exception ex) {
-
-    //         resposta = Response.status(500);
-    //         resposta.entity(new Mensagem("Erro inesperado: " + ex.getMessage()));
     //     }
     //     return resposta.build();
     // }
