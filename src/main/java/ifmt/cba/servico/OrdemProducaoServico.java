@@ -151,11 +151,11 @@ public class OrdemProducaoServico {
     @PUT
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @Path("/processarOrdemProducao")
-    public Response processarOrdemProducao(OrdemProducaoDTO ordemProducaoDTO) {
+    @Path("/{codigo}/processar-ordem")
+    public Response processarOrdemProducao(@PathParam("codigo") int codigo) {
         Response.ResponseBuilder resposta;
         try {
-            ordemProducaoDTO = ordemProducaoNegocio.pesquisaCodigo(ordemProducaoDTO.getCodigo());
+            OrdemProducaoDTO ordemProducaoDTO = ordemProducaoNegocio.pesquisaCodigo(codigo);
             ordemProducaoNegocio.processarOrdemProducao(ordemProducaoDTO);
             resposta = Response.ok();
         } catch (Exception ex) {
@@ -168,7 +168,7 @@ public class OrdemProducaoServico {
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    @Path("/pesquisarProdutosMaisProduzidos")
+    @Path("/relatorio/produtos-mais-produzidos")
     public Response pesquisarProdutosMaisProduzidos() {
         Response.ResponseBuilder resposta;
         try {
@@ -211,7 +211,7 @@ public class OrdemProducaoServico {
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    @Path("/pesquisarProdutosMenosProduzidos")
+    @Path("/relatorio/produtos-menos-produzidos")
     public Response pesquisarProdutosMenosProduzidos() {
         Response.ResponseBuilder resposta;
         try {

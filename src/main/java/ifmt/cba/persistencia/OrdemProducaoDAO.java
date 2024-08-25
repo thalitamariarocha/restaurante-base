@@ -32,7 +32,7 @@ public class OrdemProducaoDAO extends DAO<OrdemProducao>{
 		try {
 			Query query = this.entityManager
 					.createQuery("SELECT op FROM OrdemProducao op WHERE UPPER(op.estado) = :pEstado");
-			query.setParameter("pEstado", listaOrdemProducao);
+			query.setParameter("pEstado", estado.toString().toUpperCase());
 			listaOrdemProducao = query.getResultList();
 		} catch (Exception ex) {
 			throw new PersistenciaException("Erro na selecao por estado - " + ex.getMessage());
