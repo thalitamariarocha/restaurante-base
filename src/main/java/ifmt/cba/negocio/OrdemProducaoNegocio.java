@@ -188,15 +188,6 @@ public class OrdemProducaoNegocio {
 		}
 	}
 
-	public List<OrdemProducaoDTO> toDTOAll(List<OrdemProducao> listaOrdemProducao) {
-		List<OrdemProducaoDTO> listaDTO = new ArrayList<OrdemProducaoDTO>();
-
-		for (OrdemProducao ordemProducao : listaOrdemProducao) {
-			listaDTO.add(this.toDTO(ordemProducao));
-		}
-		return listaDTO;
-	}
-
 	public void processarOrdemProducao(OrdemProducaoDTO ordemProducaoDTO) throws NegocioException {
 
 		OrdemProducao ordemProducao = this.toEntity(ordemProducaoDTO);
@@ -238,6 +229,15 @@ public class OrdemProducaoNegocio {
 			ordemProducaoDAO.rollbackTransaction();
 			throw new NegocioException("Existem produtos sem estoque suficiente para o processamento");
 		}
+	}
+
+	public List<OrdemProducaoDTO> toDTOAll(List<OrdemProducao> listaOrdemProducao) {
+		List<OrdemProducaoDTO> listaDTO = new ArrayList<OrdemProducaoDTO>();
+
+		for (OrdemProducao ordemProducao : listaOrdemProducao) {
+			listaDTO.add(this.toDTO(ordemProducao));
+		}
+		return listaDTO;
 	}
 
 	public OrdemProducaoDTO toDTO(OrdemProducao ordemProducao) {

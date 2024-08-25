@@ -1,7 +1,6 @@
 package ifmt.cba.servico;
 
 
-import ifmt.cba.dto.MovimentoEstoqueDTO;
 import ifmt.cba.dto.RegistroEstoqueDTO;
 import ifmt.cba.negocio.RegistroEstoqueNegocio;
 import ifmt.cba.persistencia.FabricaEntityManager;
@@ -12,10 +11,7 @@ import ifmt.cba.servico.util.Mensagem;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.*;
 
-import java.time.LocalDate;
-import java.util.List;
-
-@Path("/registroEstoque")
+@Path("/registro-estoque")
 public class RegistroEstoqueServico {
     private static RegistroEstoqueNegocio registroEstoqueNegocio;
     private static RegistroEstoqueDAO registroEstoqueDAO;
@@ -38,7 +34,7 @@ public class RegistroEstoqueServico {
         try {
             registroEstoqueNegocio.inserir(registroEstoqueDTO);
             RegistroEstoqueDTO registroEstoqueDTOTemp = registroEstoqueNegocio.pesquisaCodigo(registroEstoqueDTO.getCodigo());
-            registroEstoqueDTOTemp.setLink("/registroEstoque/" + registroEstoqueDTOTemp.getCodigo());
+            registroEstoqueDTOTemp.setLink("/registro-estoque/" + registroEstoqueDTOTemp.getCodigo());
             resposta = Response.ok();
             resposta.entity(registroEstoqueDTOTemp);
         } catch (Exception ex) {
@@ -80,47 +76,46 @@ public class RegistroEstoqueServico {
         return resposta.build();
     }
 
-    @GET
-    @Path("/movimento/{movimento}")
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response pesquisarMovimento(@PathParam("movimento") String movimento) {
-        Response.ResponseBuilder resposta;
-        try {
-            List<RegistroEstoqueDTO> listaEstoqueDTO = registroEstoqueNegocio.buscarPorMovimento(MovimentoEstoqueDTO.valueOf(movimento));
-            for (RegistroEstoqueDTO registroEstoque : listaEstoqueDTO) {
-                registroEstoque.setLink("/registroEstoque/" + registroEstoque.getCodigo());
-            }
+    // @GET
+    // @Path("/movimento/{movimento}")
+    // @Produces(MediaType.APPLICATION_JSON)
+    // public Response pesquisarMovimento(@PathParam("movimento") String movimento) {
+    //     Response.ResponseBuilder resposta;
+    //     try {
+    //         List<RegistroEstoqueDTO> listaEstoqueDTO = registroEstoqueNegocio.buscarPorMovimento(MovimentoEstoqueDTO.valueOf(movimento));
+    //         for (RegistroEstoqueDTO registroEstoque : listaEstoqueDTO) {
+    //             registroEstoque.setLink("/registro-estoque/" + registroEstoque.getCodigo());
+    //         }
 
-            resposta = Response.ok();
-            resposta.entity(listaEstoqueDTO);
-        } catch (Exception ex) {
-            resposta = Response.status(400);
-            resposta.entity(new Mensagem(ex.getMessage()));
-        }
-        return resposta.build();
-    }
+    //         resposta = Response.ok();
+    //         resposta.entity(listaEstoqueDTO);
+    //     } catch (Exception ex) {
+    //         resposta = Response.status(400);
+    //         resposta.entity(new Mensagem(ex.getMessage()));
+    //     }
+    //     return resposta.build();
+    // }
 
-    @GET
-    @Path("/movimento/{movimento}/data/{data}")
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response pesquisarMovimentoData(@PathParam("movimento") String movimento, @PathParam("data") String data) {
-        Response.ResponseBuilder resposta;
-        try {
-            List<RegistroEstoqueDTO> listaEstoqueDTO = registroEstoqueNegocio.buscarPorMovimentoEData(MovimentoEstoqueDTO.valueOf(movimento), LocalDate.parse(data));
-            for (RegistroEstoqueDTO registroEstoque : listaEstoqueDTO) {
-                registroEstoque.setLink("/registroEstoque/" + registroEstoque.getCodigo());
-            }
+    // @GET
+    // @Path("/movimento/{movimento}/data/{data}")
+    // @Produces(MediaType.APPLICATION_JSON)
+    // public Response pesquisarMovimentoData(@PathParam("movimento") String movimento, @PathParam("data") String data) {
+    //     Response.ResponseBuilder resposta;
+    //     try {
+    //         List<RegistroEstoqueDTO> listaEstoqueDTO = registroEstoqueNegocio.buscarPorMovimentoEData(MovimentoEstoqueDTO.valueOf(movimento), LocalDate.parse(data));
+    //         for (RegistroEstoqueDTO registroEstoque : listaEstoqueDTO) {
+    //             registroEstoque.setLink("/registro-estoque/" + registroEstoque.getCodigo());
+    //         }
 
-            resposta = Response.ok();
-            resposta.entity(listaEstoqueDTO);
-        } catch (Exception ex) {
-            resposta = Response.status(400);
-            resposta.entity(new Mensagem(ex.getMessage()));
-        }
-        return resposta.build();
-    }
+    //         resposta = Response.ok();
+    //         resposta.entity(listaEstoqueDTO);
+    //     } catch (Exception ex) {
+    //         resposta = Response.status(400);
+    //         resposta.entity(new Mensagem(ex.getMessage()));
+    //     }
+    //     return resposta.build();
+    // }
 
-    //buscarPorProduto
 //    @GET
 //    @Path("/produto/{codigo}")
 //    @Produces(MediaType.APPLICATION_JSON)
@@ -140,6 +135,5 @@ public class RegistroEstoqueServico {
 //        }
 //        return resposta.build();
 //    }
-
 
 }
