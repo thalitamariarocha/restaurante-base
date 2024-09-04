@@ -13,7 +13,11 @@ public class DAO<VO> {
 
 	public Object incluir(VO vo) throws PersistenciaException {
 		try {
-			this.entityManager.persist(vo);
+			if (entityManager.contains(vo) || getId(vo) != null) {
+				vo = this.entityManager.merge(vo); // Se a entidade já existe, utilize merge
+			} else {
+				this.entityManager.persist(vo); // Se for uma nova entidade, utilize persist
+			}
 			this.entityManager.flush();
 			return getId(vo);
 		} catch (Exception e) {

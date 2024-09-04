@@ -31,6 +31,7 @@ public class RegistroEstoqueServico {
     static {
         try {
             registroEstoqueDAO = new RegistroEstoqueDAO(FabricaEntityManager.getEntityManagerProducao());
+            produtoDAO = new ProdutoDAO(FabricaEntityManager.getEntityManagerProducao());
             registroEstoqueNegocio = new RegistroEstoqueNegocio(registroEstoqueDAO, produtoDAO);
         } catch (PersistenciaException e) {
             e.printStackTrace();
@@ -43,8 +44,8 @@ public class RegistroEstoqueServico {
     public Response adicionar(RegistroEstoqueDTO registroEstoqueDTO) {
         Response.ResponseBuilder resposta;
         try {
-            registroEstoqueNegocio.inserir(registroEstoqueDTO);
-            RegistroEstoqueDTO registroEstoqueDTOTemp = registroEstoqueNegocio.pesquisaCodigo(registroEstoqueDTO.getCodigo());
+            int idGerado = registroEstoqueNegocio.inserir(registroEstoqueDTO);
+            RegistroEstoqueDTO registroEstoqueDTOTemp = registroEstoqueNegocio.pesquisaCodigo(idGerado);
             registroEstoqueDTOTemp.setLink("/registro-estoque/" + registroEstoqueDTOTemp.getCodigo());
             resposta = Response.ok();
             resposta.entity(registroEstoqueDTOTemp);
